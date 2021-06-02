@@ -11,6 +11,7 @@ const LightAppTheme = {
     surface: "#FFFFFF",
     backdrop: "#00000088",
     placeholder: "#959595",
+    onPrimaryColor: "#000000"
   }
 } 
 
@@ -20,12 +21,13 @@ const DarkAppTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    primary: "#ff8e71",
-    accent: "#ffaa9c",
+    primary: "#8bff71",
+    accent: "#e571ff",
     surface: "#202020",
     background: "#151515",
     backdrop: "#00000088",
     placeholder: "#959595",
+    onPrimaryColor: "#000000"
   }
 }
 
