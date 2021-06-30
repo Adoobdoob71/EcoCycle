@@ -35,6 +35,7 @@ function classes(colors: any, props: IconButtonProps) {
       backgroundColor: colors.surface,
       borderRadius: 8,
       borderWidth: 1,
+      padding: 6,
       borderColor: colors.primary,
     },
   });

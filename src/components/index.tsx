@@ -2,9 +2,12 @@
 export {default as Row} from './Row';
 export {default as Column} from './Column';
 export {default as Surface} from './Surface';
+export {default as Header} from './Header';
+export {default as Top} from './Top';
 
 // Components that are buttons
 export {default as IconButton} from './IconButton';
 export {default as Button} from './Button';
+export {default as Card} from './Card';
 
-// Components that display data
+// Components used for data display
