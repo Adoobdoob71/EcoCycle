@@ -11,7 +11,7 @@ import {
 } from './src/utils/Theme';
 
 export default function App() {
-  const [isThemeDark, setIsThemeDark] = React.useState<boolean>(false);
+  const [isThemeDark, setIsThemeDark] = React.useState<boolean>(true);
 
   let theme = isThemeDark ? DarkAppTheme : LightAppTheme;
 
