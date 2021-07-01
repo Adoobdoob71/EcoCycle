@@ -11,3 +11,5 @@ export {default as Button} from './Button';
 export {default as Card} from './Card';
 
 // Components used for data display
+export {default as ProgressBar} from './ProgressBar';
+export {default as PeerProgress} from './PeerProgress';
