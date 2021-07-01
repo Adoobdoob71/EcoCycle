@@ -6,8 +6,8 @@ const LightAppTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#8bff71",
-    accent: "#e571ff",
+    primary: "#21b800",
+    accent: "#9600b8",
     surface: "#FFFFFF",
     backdrop: "#00000088",
     placeholder: "#959595",
