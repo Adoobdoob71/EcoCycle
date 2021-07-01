@@ -1,10 +1,11 @@
 import React from 'react';
 import {StyleProp, StyleSheet, ViewStyle} from 'react-native';
+import {StyleProperty} from '../utils/Types';
 import {Row, Column} from './index';
 
 interface SurfaceProps {
   direction: 'row' | 'column';
-  style?: StyleProp<ViewStyle>;
+  style?: StyleProperty;
 }
 
 const Surface: React.FC<SurfaceProps> = ({style, direction, children}) => {

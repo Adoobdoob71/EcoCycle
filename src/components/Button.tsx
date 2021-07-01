@@ -2,12 +2,13 @@ import React from 'react';
 import {View, Text, StyleSheet, StyleProp, ViewStyle} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useTheme} from 'react-native-paper';
+import {StyleProperty} from '../utils/Types';
 
 interface ButtonProps {
   text: string;
   onPress: () => void;
-  style?: StyleProp<ViewStyle>;
-  innerStyle?: StyleProp<ViewStyle>;
+  style?: StyleProperty;
+  innerStyle?: StyleProperty;
   loading?: boolean;
   disabled?: boolean;
   size?: 'extra-large' | 'large' | 'medium' | 'small' | 'extra-small';
@@ -25,7 +26,7 @@ const Button: React.FC<ButtonProps> = props => {
   );
 };
 
-function classes(colors: any, props: ButtonProps) {
+function classes(colors: any, props: React.PropsWithChildren<ButtonProps>) {
   return StyleSheet.create({
     background: {
       backgroundColor: colors.primary,

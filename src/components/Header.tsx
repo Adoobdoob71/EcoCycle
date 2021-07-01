@@ -1,7 +1,8 @@
 import React from 'react';
 import {StyleProp, ViewStyle} from 'react-native';
-import {SafeAreaView, StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import {useTheme} from 'react-native-paper';
+import {StyleProperty} from '../utils/Types';
 
 interface HeaderProps {
   left?: JSX.Element;
@@ -9,7 +10,7 @@ interface HeaderProps {
   center?: JSX.Element;
   title?: string;
   subtitle?: string;
-  backgroundStyle?: StyleProp<ViewStyle>;
+  backgroundStyle?: StyleProperty;
 }
 
 const Header: React.FC<HeaderProps> = props => {
@@ -17,7 +18,7 @@ const Header: React.FC<HeaderProps> = props => {
   const styles = classes(colors);
 
   return (
-    <SafeAreaView style={[styles.headerBackground, props.backgroundStyle]}>
+    <View style={[styles.headerBackground, props.backgroundStyle]}>
       {props.left}
       {props.center ? (
         props.center
@@ -38,7 +39,7 @@ const Header: React.FC<HeaderProps> = props => {
         </View>
       )}
       {props.right}
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -47,9 +48,8 @@ function classes(colors: any) {
     headerBackground: {
       flexDirection: 'row',
       alignItems: 'center',
-      width: '100%',
       paddingHorizontal: 10,
-      paddingVertical: 6,
+      paddingVertical: 8,
     },
     centerView: {
       flex: 1,

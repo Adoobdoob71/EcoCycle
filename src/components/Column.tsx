@@ -1,8 +1,9 @@
 import React from 'react';
 import {StyleProp, View, ViewStyle} from 'react-native';
+import {StyleProperty} from '../utils/Types';
 
 interface ColumnProps {
-  style?: StyleProp<ViewStyle>;
+  style?: StyleProperty;
 }
 
 const Column: React.FC<ColumnProps> = ({style, children}) => {
