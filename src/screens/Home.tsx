@@ -23,11 +23,32 @@ import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {useNavigation} from '@react-navigation/native';
 import {BarChart} from 'react-native-chart-kit';
 import {convertOpacityToHex} from '../utils/usefulFunctions';
+import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+import PeersRecycling from '../fragments/PeersRecycling';
 
 const Home: React.FC = () => {
   const {colors} = useTheme();
   const styles = classes(colors);
   const navigation = useNavigation<any>();
+  const [modalContentIndex, setModalContentIndex] = React.useState<number>(1);
+
+  const bottomSheetRef = React.useRef<BottomSheet>(null);
+
+  const snapPoints = React.useMemo(() => [0, '25%', '50%'], []);
+
+  const modalContentNav = () => {
+    switch (modalContentIndex) {
+      case 3:
+        return <PeersRecycling />;
+      default:
+        return null;
+    }
+  };
+
+  const changeModalNav = (index: number) => {
+    setModalContentIndex(index);
+    bottomSheetRef.current?.snapTo(1);
+  };
 
   const openDrawer = () => navigation.openDrawer();
   return (
@@ -72,7 +93,7 @@ const Home: React.FC = () => {
         />
         <View style={styles.contentView}>
           <Card
-            onPress={() => {}}
+            onPress={() => changeModalNav(1)}
             innerStyle={{
               padding: 12,
             }}>
@@ -114,7 +135,7 @@ const Home: React.FC = () => {
             </Row>
           </Card>
           <Card
-            onPress={() => {}}
+            onPress={() => changeModalNav(2)}
             outerStyle={{
               marginVertical: 12,
             }}>
@@ -150,7 +171,9 @@ const Home: React.FC = () => {
               style={{marginVertical: 8, alignSelf: 'center', borderRadius: 8}}
             />
           </Card>
-          <Card onPress={() => {}} outerStyle={{marginBottom: 12}}>
+          <Card
+            onPress={() => changeModalNav(3)}
+            outerStyle={{marginBottom: 12}}>
             <Top style={{margin: 4, marginVertical: 2}}>
               Here's where you stand amongst your peers
             </Top>
@@ -178,6 +201,19 @@ const Home: React.FC = () => {
           </Card>
         </View>
       </ScrollView>
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={0}
+        handleComponent={() => (
+          <View style={styles.bottomSheetsBar}>
+            <View style={styles.bottomSheetsHandle}></View>
+          </View>
+        )}
+        snapPoints={snapPoints}>
+        <BottomSheetScrollView style={styles.bottomSheetsBackground}>
+          <SafeAreaView>{modalContentNav()}</SafeAreaView>
+        </BottomSheetScrollView>
+      </BottomSheet>
     </SafeAreaView>
   );
 };
@@ -204,6 +240,23 @@ function classes(colors: any) {
     recycledBottlesGreeting: {
       fontSize: 14,
       color: colors.text,
+    },
+    bottomSheetsBackground: {
+      backgroundColor: colors.background,
+    },
+    bottomSheetsBar: {
+      backgroundColor: colors.surface,
+      borderTopEndRadius: 12,
+      borderTopStartRadius: 12,
+      height: 24,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    bottomSheetsHandle: {
+      backgroundColor: colors.placeholder,
+      width: '10%',
+      height: 5,
+      borderRadius: 8,
     },
   });
 }
