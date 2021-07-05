@@ -9,6 +9,7 @@ export {default as Top} from './Top';
 export {default as IconButton} from './IconButton';
 export {default as Button} from './Button';
 export {default as Card} from './Card';
+export {default as RippleButton} from './RippleButton';
 
 // Components used for data display
 export {default as ProgressBar} from './ProgressBar';
