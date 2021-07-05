@@ -1,12 +1,11 @@
 import React from 'react';
-import {TextStyle, ViewStyle} from 'react-native';
-import {Text, View, StyleSheet, StyleProp} from 'react-native';
+import {Text, View, StyleSheet, StyleProp, TextStyle} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {StyleProperty} from '../utils/Types';
 
 interface TopProps {
   style?: StyleProperty;
-  textStyle?: StyleProperty;
+  textStyle?: StyleProp<TextStyle>;
   right?: JSX.Element;
 }
 
