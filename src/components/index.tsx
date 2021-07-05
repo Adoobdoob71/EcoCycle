@@ -14,3 +14,4 @@ export {default as RippleButton} from './RippleButton';
 // Components used for data display
 export {default as ProgressBar} from './ProgressBar';
 export {default as PeerProgress} from './PeerProgress';
+export {default as Friend} from './Friend';
