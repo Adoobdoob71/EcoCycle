@@ -8,7 +8,7 @@ const PeersRecycling: React.FC = () => {
   const styles = classes(colors);
   return (
     <SafeAreaView style={styles.background}>
-      <Top>Here's where you stand amongst your peers</Top>
+      <Top textStyle={{ fontSize: 18 }}>You vs Your Peers</Top>
       <View style={styles.peersView}>
         <RippleButton onPress={() => {}} outerStyle={{marginBottom: 10}}>
           <PeerProgress

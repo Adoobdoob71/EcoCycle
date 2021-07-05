@@ -25,6 +25,7 @@ import {BarChart} from 'react-native-chart-kit';
 import {convertOpacityToHex} from '../utils/usefulFunctions';
 import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import PeersRecycling from '../fragments/PeersRecycling';
+import RecyclingHistory from '../fragments/RecyclingHistory';
 
 const Home: React.FC = () => {
   const {colors} = useTheme();
@@ -38,6 +39,8 @@ const Home: React.FC = () => {
 
   const modalContentNav = () => {
     switch (modalContentIndex) {
+      case 2:
+        return <RecyclingHistory />;
       case 3:
         return <PeersRecycling />;
       default:
@@ -83,7 +86,6 @@ const Home: React.FC = () => {
             </View>
           }
           backgroundStyle={{
-            backgroundColor: colors.surface,
             borderRadius: 8,
             margin: 6,
             elevation: 4,
@@ -139,8 +141,8 @@ const Home: React.FC = () => {
             outerStyle={{
               marginVertical: 12,
             }}>
-            <Top textStyle={{margin: 4, marginVertical: 2}}>
-              Recycling history
+            <Top textStyle={{margin: 4, marginVertical: 2, fontSize: 18}}>
+              Recycling History
             </Top>
             <BarChart
               data={{
@@ -174,8 +176,8 @@ const Home: React.FC = () => {
           <Card
             onPress={() => changeModalNav(3)}
             outerStyle={{marginBottom: 12}}>
-            <Top style={{margin: 4, marginVertical: 2}}>
-              Here's where you stand amongst your peers
+            <Top style={{margin: 4, marginVertical: 2}} textStyle={{ fontSize: 18 }}>
+              You vs Your Peers
             </Top>
             <View style={{margin: 8}}>
               <PeerProgress
