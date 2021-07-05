@@ -30,12 +30,14 @@ const Header: React.FC<HeaderProps> = props => {
             ellipsizeMode="tail">
             {props.title}
           </Text>
-          <Text
-            style={styles.headerSubtitle}
-            numberOfLines={1}
-            ellipsizeMode="tail">
-            {props.subtitle}
-          </Text>
+          {props.subtitle && (
+            <Text
+              style={styles.headerSubtitle}
+              numberOfLines={1}
+              ellipsizeMode="tail">
+              {props.subtitle}
+            </Text>
+          )}
         </View>
       )}
       {props.right}
@@ -50,6 +52,7 @@ function classes(colors: any) {
       alignItems: 'center',
       paddingHorizontal: 10,
       paddingVertical: 8,
+      backgroundColor: colors.surface
     },
     centerView: {
       flex: 1,
