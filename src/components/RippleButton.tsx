@@ -1,7 +1,10 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Platform} from 'react-native';
 import {StyleProperty} from '../utils/Types';
-import {TouchableNativeFeedback} from 'react-native-gesture-handler';
+import {
+  TouchableNativeFeedback,
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
 import {convertOpacityToHex} from '../utils/usefulFunctions';
 import {useTheme} from 'react-native-paper';
 
@@ -15,7 +18,7 @@ interface RippleButtonProps {
 const RippleButton: React.FC<RippleButtonProps> = props => {
   const {colors} = useTheme();
   const styles = classes(colors);
-  return (
+  return Platform.OS === 'android' ? (
     <View
       style={[
         props.outerStyle,
@@ -35,6 +38,12 @@ const RippleButton: React.FC<RippleButtonProps> = props => {
         </View>
       </TouchableNativeFeedback>
     </View>
+  ) : (
+    <TouchableOpacity onPress={props.onPress} style={props.outerStyle}>
+      <View style={[props.innerStyle, styles.background]}>
+        {props.children}
+      </View>
+    </TouchableOpacity>
   );
 };
 
