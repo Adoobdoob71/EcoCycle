@@ -13,6 +13,7 @@ interface RippleButtonProps {
   innerStyle?: StyleProperty;
   borderRadius?: number;
   onPress: () => void;
+  rippleColor?: string;
 }
 
 const RippleButton: React.FC<RippleButtonProps> = props => {
@@ -24,13 +25,15 @@ const RippleButton: React.FC<RippleButtonProps> = props => {
         props.outerStyle,
         {
           overflow: 'hidden',
-          borderRadius: props.borderRadius ? props.borderRadius : 18,
+          borderRadius: props.borderRadius ? props.borderRadius : 0,
         },
       ]}>
       <TouchableNativeFeedback
         onPress={props.onPress}
         background={TouchableNativeFeedback.Ripple(
-          `${colors.placeholder}${convertOpacityToHex(0.4)}`,
+          `${
+            props.rippleColor ? props.rippleColor : colors.placeholder
+          }${convertOpacityToHex(0.4)}`,
           true,
         )}>
         <View style={[props.innerStyle, styles.background]}>
