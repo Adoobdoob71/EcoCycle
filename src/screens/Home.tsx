@@ -54,6 +54,7 @@ const Home: React.FC = () => {
   };
 
   const openDrawer = () => navigation.openDrawer();
+  const goToProfile = () => navigation.navigate('ProfileScreen');
   return (
     <SafeAreaView style={styles.mainView}>
       <ScrollView
@@ -74,8 +75,12 @@ const Home: React.FC = () => {
           }
           right={
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <IconButton icon="barcode-scan" onPress={() => {}} borderless />
-              <TouchableOpacity style={{marginStart: 8}}>
+              <IconButton
+                icon="barcode-scan"
+                onPress={() => navigation.navigate('ScanScreen')}
+                borderless
+              />
+              <TouchableOpacity style={{marginStart: 8}} onPress={goToProfile}>
                 <Image
                   source={{
                     uri: 'https://avatars.githubusercontent.com/u/46420655?v=4',
@@ -176,7 +181,9 @@ const Home: React.FC = () => {
           <Card
             onPress={() => changeModalNav(3)}
             outerStyle={{marginBottom: 12}}>
-            <Top style={{margin: 4, marginVertical: 2}} textStyle={{ fontSize: 18 }}>
+            <Top
+              style={{margin: 4, marginVertical: 2}}
+              textStyle={{fontSize: 18}}>
               You vs Your Peers
             </Top>
             <View style={{margin: 8}}>
