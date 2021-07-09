@@ -7,7 +7,7 @@ interface RowProps {
 }
 
 const Row: React.FC<RowProps> = ({style, children}) => {
-  return <View style={[style, {flexDirection: 'row'}]}>{children}</View>;
+  return <View style={[{flexDirection: 'row'}, style]}>{children}</View>;
 };
 
 export default Row;
