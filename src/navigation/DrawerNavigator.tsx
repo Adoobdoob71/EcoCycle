@@ -3,6 +3,8 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import {useTheme} from 'react-native-paper';
 import Home from '../screens/Home';
 import Friends from '../screens/Friends';
+import DrawerFragment from '../fragments/Drawer';
+import Settings from '../screens/Settings';
 
 const Drawer = createDrawerNavigator();
 
@@ -12,9 +14,10 @@ const DrawerNavigator: React.FC = () => {
     <Drawer.Navigator
       initialRouteName="Home"
       drawerType="back"
-      drawerStyle={{backgroundColor: colors.background}}>
+      drawerContent={props => <DrawerFragment {...props} />}>
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Friends" component={Friends} />
+      <Drawer.Screen name="Settings" component={Settings} />
     </Drawer.Navigator>
   );
 };
