@@ -11,9 +11,8 @@ import {
   User,
 } from '@react-native-google-signin/google-signin';
 import {AuthContext} from '../utils/Auth';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 import {PreferencesContext} from '../utils/Theme';
+import firebase from 'firebase/app';
 
 const SignIn: React.FC = () => {
   const [isSigninInProgress, setIsSigninInProgress] = React.useState(false);
@@ -32,10 +31,10 @@ const SignIn: React.FC = () => {
       await GoogleSignin.hasPlayServices();
       const newUserInfo = await GoogleSignin.signIn();
       updateUserInfo(newUserInfo);
-      const googleCredential = auth.GoogleAuthProvider.credential(
+      const googleCredential = firebase.auth.GoogleAuthProvider.credential(
         newUserInfo.idToken,
       );
-      await auth().signInWithCredential(googleCredential);
+      await firebase.auth().signInWithCredential(googleCredential);
       await signAccountDataIntoDB(newUserInfo);
       console.log('Success!');
     } catch (error) {
@@ -53,13 +52,12 @@ const SignIn: React.FC = () => {
 
   const signAccountDataIntoDB = async (newUser: User) => {
     try {
-      const reference = firestore().collection('users');
-      console.log(reference.path);
-      let result = await reference.doc(newUser.user.id).get();
+      const reference = firebase.database().ref('users');
+      let result = await reference.child(newUser.user.id).get();
       console.log(result);
-      if (result.exists)
-        await reference.doc(newUser.user.id).update(newUser.user);
-      else await reference.doc(newUser.user.id).set(newUser.user);
+      if (result.exists())
+        await reference.child(newUser.user.id).update(newUser.user);
+      else await reference.child(newUser.user.id).set(newUser.user);
     } catch (error) {
       console.error(error.message);
     }
