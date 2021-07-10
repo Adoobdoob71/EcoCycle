@@ -11,11 +11,12 @@ interface DrawerItemProps {
   outerStyle?: StyleProperty;
   currentIndex: number;
   index: number;
+  params?: Object;
 }
 
 const DrawerItem: React.FC<DrawerItemProps> = props => {
   const navigation = useNavigation();
-  const navigate = () => navigation.navigate(props.whereTo);
+  const navigate = () => navigation.navigate(props.whereTo, props.params);
   const {colors} = useTheme();
   const styles = classes(colors, props);
 
