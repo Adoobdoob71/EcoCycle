@@ -8,6 +8,7 @@ import {PreferencesContext} from '../utils/Theme';
 import {useTheme} from 'react-native-paper';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {AuthContext} from '../utils/Auth';
+import firebase from 'firebase/app';
 
 const Settings: React.FC = () => {
   const navigation = useNavigation();
@@ -23,6 +24,7 @@ const Settings: React.FC = () => {
     try {
       await GoogleSignin.revokeAccess();
       await GoogleSignin.signOut();
+      await firebase.auth().signOut();
       updateUserInfo(null);
     } catch (error) {
       console.error(error);
