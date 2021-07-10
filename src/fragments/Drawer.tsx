@@ -10,12 +10,14 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {DrawerItem, IconButton, Row} from '../components';
 import {PreferencesContext} from '../utils/Theme';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
+import {AuthContext} from '../utils/Auth';
 
 const DrawerFragment: React.FC<
   DrawerContentComponentProps<DrawerContentOptions>
@@ -24,8 +26,13 @@ const DrawerFragment: React.FC<
   const styles = classes(colors);
   const {toggleTheme} = React.useContext(PreferencesContext);
 
+  const {userInfo} = React.useContext(AuthContext);
+
   const navigation = useNavigation();
   const navigateToSettings = () => navigation.navigate('Settings');
+
+  const openGithub = () =>
+    Linking.openURL('https://github.com/Adoobdoob71/EcoCycle');
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -40,7 +47,7 @@ const DrawerFragment: React.FC<
             marginVertical: 12,
             padding: 12,
           }}>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={openGithub}>
             <Image
               source={{
                 uri: 'https://i.pinimg.com/originals/08/87/33/088733465f7c684a6cdd242eb463b5bf.jpg',
@@ -68,6 +75,7 @@ const DrawerFragment: React.FC<
           text="My Profile"
           whereTo="ProfileScreen"
           outerStyle={{margin: 8}}
+          params={{id: userInfo?.user.id}}
           currentIndex={props.state.index}
           index={2}
         />
