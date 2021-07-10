@@ -18,10 +18,13 @@ import {convertOpacityToHex} from '../utils/usefulFunctions';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
 import {AuthContext} from '../utils/Auth';
+import firebase from 'firebase/app';
+import {UserData} from '../utils/Types';
 
 const Profile: React.FC<
-  StackScreenProps<{ProfileScreen: {myProfile: boolean}}, 'ProfileScreen'>
+  StackScreenProps<{ProfileScreen: {id: string}}, 'ProfileScreen'>
 > = props => {
+  const [userData, setUserData] = React.useState<UserData | null>(null);
   const {colors} = useTheme();
   const styles = classes(colors);
 
@@ -31,8 +34,12 @@ const Profile: React.FC<
   const {userInfo} = React.useContext(AuthContext);
 
   const loadData = async () => {
-    if (props.route.params.myProfile) {
-    }
+    let result = await firebase
+      .database()
+      .ref('users')
+      .child(props.route.params.id)
+      .get();
+    setUserData(result.val());
   };
 
   React.useEffect(() => {
@@ -53,20 +60,14 @@ const Profile: React.FC<
       <Surface direction="row" style={{alignItems: 'center', margin: 12}}>
         <Image
           source={{
-            uri: userInfo?.user.photo,
+            uri: userData?.photo,
           }}
           style={styles.profilePicture}
         />
         <Column style={{marginHorizontal: 12, flex: 1}}>
-          <Row style={{alignItems: 'center', marginBottom: 6}}>
-            <Text style={styles.nickname}>{userInfo?.user.givenName}</Text>
-            <Text style={styles.username}>@DoritoWizard71</Text>
-          </Row>
-          <Text
-            style={styles.description}
-            numberOfLines={2}
-            lineBreakMode="tail">
-            I like programming and playing basketball
+          <Text style={styles.name}>{userData?.name}</Text>
+          <Text style={styles.email} numberOfLines={2} lineBreakMode="tail">
+            {userData?.email}
           </Text>
         </Column>
       </Surface>
@@ -115,7 +116,6 @@ const Profile: React.FC<
               },
             ],
           }}
-          // withInnerLines={false}
           yLabelsOffset={32}
           yAxisLabel=""
           yAxisSuffix=""
@@ -145,23 +145,19 @@ function classes(colors: any) {
       backgroundColor: colors.background,
     },
     profilePicture: {
-      width: 72,
-      height: 72,
-      borderRadius: 36,
+      width: 50,
+      height: 50,
+      borderRadius: 25,
     },
-    nickname: {
+    name: {
       fontSize: 16,
       color: colors.text,
       fontWeight: 'bold',
-      marginEnd: 4,
+      marginBottom: 2,
     },
-    username: {
-      fontSize: 16,
-      color: colors.placeholder,
-    },
-    description: {
+    email: {
       fontSize: 14,
-      color: colors.text,
+      color: colors.placeholder,
     },
     recycledBottlesAmount: {
       fontSize: 18,
