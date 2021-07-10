@@ -59,7 +59,7 @@ const IconButton: React.FC<IconButtonProps> = props => {
 function classes(colors: any, props: React.PropsWithChildren<IconButtonProps>) {
   return StyleSheet.create({
     background: {
-      backgroundColor: colors.surface,
+      backgroundColor: props.borderless ? 'transparent' : colors.surface,
       borderRadius: 8,
       borderWidth: props.borderless ? 0 : 1,
       padding: props.borderless ? 10 : 6,
