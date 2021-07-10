@@ -16,13 +16,28 @@ import PeersRecycling from '../fragments/PeersRecycling';
 import RecyclingHistory from '../fragments/RecyclingHistory';
 import {convertOpacityToHex} from '../utils/usefulFunctions';
 import {ScrollView} from 'react-native-gesture-handler';
+import {StackScreenProps} from '@react-navigation/stack';
+import {AuthContext} from '../utils/Auth';
 
-const Profile: React.FC = () => {
+const Profile: React.FC<
+  StackScreenProps<{ProfileScreen: {myProfile: boolean}}, 'ProfileScreen'>
+> = props => {
   const {colors} = useTheme();
   const styles = classes(colors);
 
   const navigation = useNavigation();
   const goBack = () => navigation.goBack();
+
+  const {userInfo} = React.useContext(AuthContext);
+
+  const loadData = async () => {
+    if (props.route.params.myProfile) {
+    }
+  };
+
+  React.useEffect(() => {
+    loadData();
+  }, []);
 
   return (
     <ScrollView
@@ -38,13 +53,13 @@ const Profile: React.FC = () => {
       <Surface direction="row" style={{alignItems: 'center', margin: 12}}>
         <Image
           source={{
-            uri: 'https://i.pinimg.com/originals/08/87/33/088733465f7c684a6cdd242eb463b5bf.jpg',
+            uri: userInfo?.user.photo,
           }}
           style={styles.profilePicture}
         />
         <Column style={{marginHorizontal: 12, flex: 1}}>
           <Row style={{alignItems: 'center', marginBottom: 6}}>
-            <Text style={styles.nickname}>DoritoWizard</Text>
+            <Text style={styles.nickname}>{userInfo?.user.givenName}</Text>
             <Text style={styles.username}>@DoritoWizard71</Text>
           </Row>
           <Text

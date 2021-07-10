@@ -26,6 +26,11 @@ import {convertOpacityToHex} from '../utils/usefulFunctions';
 import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import PeersRecycling from '../fragments/PeersRecycling';
 import RecyclingHistory from '../fragments/RecyclingHistory';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import {AuthContext} from '../utils/Auth';
 
 const Home: React.FC = () => {
   const {colors} = useTheme();
@@ -54,7 +59,32 @@ const Home: React.FC = () => {
   };
 
   const openDrawer = () => navigation.openDrawer();
-  const goToProfile = () => navigation.navigate('ProfileScreen');
+  const goToProfile = () =>
+    navigation.navigate('ProfileScreen', {myProfile: true});
+
+  const {updateUserInfo, userInfo} = React.useContext(AuthContext);
+
+  React.useEffect(() => {
+    signIntoAccount();
+  }, []);
+
+  const signIntoAccount = async () => {
+    try {
+      const userInfo = await GoogleSignin.signInSilently();
+      updateUserInfo(userInfo);
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+        navigation.navigate('SigninScreen');
+      } else {
+        // some other error
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    signIntoAccount();
+  }, []);
+
   return (
     <SafeAreaView style={styles.mainView}>
       <ScrollView
@@ -83,7 +113,7 @@ const Home: React.FC = () => {
               <TouchableOpacity style={{marginStart: 8}} onPress={goToProfile}>
                 <Image
                   source={{
-                    uri: 'https://avatars.githubusercontent.com/u/46420655?v=4',
+                    uri: userInfo?.user.photo,
                   }}
                   style={styles.headerProfilePicture}
                 />
@@ -95,7 +125,7 @@ const Home: React.FC = () => {
             margin: 6,
             elevation: 4,
           }}
-          title={`Welcome back, Elad`}
+          title={`Welcome back, ${userInfo?.user.givenName}`}
           subtitle="Planning on recycling more?"
         />
         <View style={styles.contentView}>

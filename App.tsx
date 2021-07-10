@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
 import {Appearance, StatusBar} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {Provider as PaperProvider} from 'react-native-paper';
 import StackNavigator from './src/navigation/StackNavigator';
 import {
@@ -9,25 +9,34 @@ import {
   LightAppTheme,
   PreferencesContext,
 } from './src/utils/Theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  User,
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import {AuthContext} from './src/utils/Auth';
 
 export default function App() {
   const [isThemeDark, setIsThemeDark] = React.useState<boolean>(true);
+  const [userInfo, setUserInfo] = React.useState<User | null>(null);
 
   let theme = isThemeDark ? DarkAppTheme : LightAppTheme;
+  // const navigation = useNavigation();
 
-  // React.useEffect(() => {
-  //   loadTheme().then((result) => {
-  //     setIsThemeDark(result === "dark" ? true : false);
-  //   });
-  // }, []);
+  React.useEffect(() => {
+    loadTheme().then(result => {
+      setIsThemeDark(result === 'dark' ? true : false);
+    });
+  }, []);
 
-  // const loadTheme = async () => {
-  //   let result = await AsyncStorage.getItem("theme-status");
-  //   return result;
-  // };
+  const loadTheme = async () => {
+    let result = await AsyncStorage.getItem('theme-status');
+    return result;
+  };
 
   const toggleTheme = React.useCallback(async () => {
-    // await AsyncStorage.setItem("theme-status", isThemeDark ? "light" : "dark");
+    await AsyncStorage.setItem('theme-status', isThemeDark ? 'light' : 'dark');
     return setIsThemeDark(!isThemeDark);
   }, [isThemeDark]);
 
@@ -41,6 +50,18 @@ export default function App() {
 
   if (Appearance.getColorScheme() === 'dark') toggleTheme();
 
+  const updateUserInfo = React.useCallback((newUserInfo: User | null) => {
+    return setUserInfo(newUserInfo);
+  }, []);
+
+  const auth = React.useMemo(
+    () => ({
+      userInfo,
+      updateUserInfo,
+    }),
+    [updateUserInfo, userInfo],
+  );
+
   return (
     <>
       <StatusBar
@@ -49,13 +70,15 @@ export default function App() {
         barStyle={isThemeDark ? 'light-content' : 'dark-content'}
         animated
       />
-      <PreferencesContext.Provider value={preferencers}>
-        <NavigationContainer theme={theme}>
-          <PaperProvider theme={theme}>
-            <StackNavigator />
-          </PaperProvider>
-        </NavigationContainer>
-      </PreferencesContext.Provider>
+      <AuthContext.Provider value={auth}>
+        <PreferencesContext.Provider value={preferencers}>
+          <NavigationContainer theme={theme}>
+            <PaperProvider theme={theme}>
+              <StackNavigator />
+            </PaperProvider>
+          </NavigationContainer>
+        </PreferencesContext.Provider>
+      </AuthContext.Provider>
     </>
   );
 }
