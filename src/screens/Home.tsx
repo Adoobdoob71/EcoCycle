@@ -38,6 +38,8 @@ const Home: React.FC = () => {
   const navigation = useNavigation<any>();
   const [modalContentIndex, setModalContentIndex] = React.useState<number>(1);
 
+  const {updateUserInfo, userInfo} = React.useContext(AuthContext);
+
   const bottomSheetRef = React.useRef<BottomSheet>(null);
 
   const snapPoints = React.useMemo(() => [0, '25%', '50%'], []);
@@ -60,9 +62,7 @@ const Home: React.FC = () => {
 
   const openDrawer = () => navigation.openDrawer();
   const goToProfile = () =>
-    navigation.navigate('ProfileScreen', {myProfile: true});
-
-  const {updateUserInfo, userInfo} = React.useContext(AuthContext);
+    navigation.navigate('ProfileScreen', {id: userInfo?.user.id});
 
   React.useEffect(() => {
     signIntoAccount();
@@ -188,7 +188,6 @@ const Home: React.FC = () => {
                   },
                 ],
               }}
-              // withInnerLines={false}
               yLabelsOffset={32}
               yAxisLabel=""
               yAxisSuffix=""
