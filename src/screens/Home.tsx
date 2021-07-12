@@ -31,11 +31,23 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import {AuthContext} from '../utils/Auth';
+import {watermelonDatabase} from '../..';
+import {Q} from '@nozbe/watermelondb';
+import {RecyclingDataType} from '../utils/Types';
 
 const Home: React.FC = () => {
   const {colors} = useTheme();
   const styles = classes(colors);
   const navigation = useNavigation<any>();
+
+  const [bottlesAmount, setBottlesAmount] = React.useState(0);
+  const [itemsRecycledPercentage, setItemsRecycledPercentage] =
+    React.useState(0);
+
+  const [recyclingData, setRecyclingData] = React.useState<RecyclingDataType[]>(
+    [],
+  );
+
   const [modalContentIndex, setModalContentIndex] = React.useState<number>(1);
 
   const {updateUserInfo, userInfo} = React.useContext(AuthContext);
@@ -83,7 +95,35 @@ const Home: React.FC = () => {
 
   React.useEffect(() => {
     signIntoAccount();
+    readData();
   }, []);
+
+  const readData = async () => {
+    try {
+      const data = watermelonDatabase.get('items_recycled');
+      const date = new Date();
+      date.setDate(date.getDate() - 1);
+      const recycledItems = await data
+        .query(Q.where('created_at', Q.gt(date.getMilliseconds())))
+        .fetch();
+      let recycledItemsCount = 0;
+      recycledItems.map((item: any) => {
+        setBottlesAmount(bottles => bottles + item.bottles);
+        recycledItemsCount +=
+          item.plasticItems + item.metallicItems + item.paperItems;
+      });
+      setItemsRecycledPercentage(Math.round((8 / recycledItemsCount) * 100));
+      date.setDate(date.getDate() - 7);
+      const recycledItemsDuringWeek = await data
+        .query(Q.where('created_at', Q.gt(date.getMilliseconds())))
+        .fetch();
+      recycledItemsDuringWeek.map((item: any) => {
+        setRecyclingData(recyclingData => [...recyclingData, item]);
+      });
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.mainView}>
@@ -140,12 +180,14 @@ const Home: React.FC = () => {
                   rotation={0}
                   size={100}
                   width={2}
-                  fill={(10 / 25) * 100}
+                  fill={(0 / bottlesAmount) * 100}
                   tintColor={colors.primary}
                   backgroundColor={colors.placeholder}
                   style={{marginVertical: 12}}>
                   {fill => (
-                    <Text style={styles.recycledBottlesAmount}>10/25</Text>
+                    <Text style={styles.recycledBottlesAmount}>
+                      0/{bottlesAmount}
+                    </Text>
                   )}
                 </AnimatedCircularProgress>
                 <Text style={styles.recycledBottlesGreeting}>
@@ -157,16 +199,18 @@ const Home: React.FC = () => {
                   rotation={0}
                   size={100}
                   width={2}
-                  fill={53}
+                  fill={itemsRecycledPercentage}
                   tintColor={colors.primary}
                   backgroundColor={colors.placeholder}
                   style={{marginVertical: 12}}>
                   {fill => (
-                    <Text style={styles.recycledBottlesAmount}>53%</Text>
+                    <Text style={styles.recycledBottlesAmount}>
+                      {itemsRecycledPercentage}%
+                    </Text>
                   )}
                 </AnimatedCircularProgress>
                 <Text style={styles.recycledBottlesGreeting}>
-                  53% items recycled
+                  {itemsRecycledPercentage}% items recycled
                 </Text>
               </Column>
             </Row>
@@ -181,10 +225,19 @@ const Home: React.FC = () => {
             </Top>
             <BarChart
               data={{
-                labels: ['30/6', '29/6', '28/6', '27/6'],
+                labels: recyclingData
+                  .slice(recyclingData.length - 3, recyclingData.length)
+                  .map(
+                    item =>
+                      item.createdAt.getDate() +
+                      '/' +
+                      (item.createdAt.getMonth() + 1),
+                  ),
                 datasets: [
                   {
-                    data: [23, 17, 19, 10],
+                    data: recyclingData
+                      .slice(recyclingData.length - 3, recyclingData.length)
+                      .map(item => item.bottles),
                   },
                 ],
               }}
@@ -219,7 +272,7 @@ const Home: React.FC = () => {
               <PeerProgress
                 nickname="Elad Mekonen"
                 profile_picture="https://avatars.githubusercontent.com/u/46420655?v=4"
-                progressValue={0.64}
+                progressValue={itemsRecycledPercentage / 100}
                 outerStyle={{marginBottom: 6}}
                 isUser
               />
