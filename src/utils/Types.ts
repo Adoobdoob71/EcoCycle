@@ -10,3 +10,12 @@ export interface UserData {
 	familyName: string | null;
 	givenName: string | null;
 }
+
+export interface RecyclingDataType {
+	allItems?: any; 
+  bottles?: any;
+  plasticItems?: any;
+  metallicItems?: any;
+  paperItems?: any;
+  createdAt?: any;
+}
