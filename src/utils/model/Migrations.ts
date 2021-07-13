@@ -4,15 +4,14 @@ export default schemaMigrations({
   migrations: [
     {
       // ⚠️ Set this to a number one larger than the current schema version
-      toVersion: 2,
+      toVersion: 3,
       steps: [
-        // See "Migrations API" for more details
-        addColumns({
-          table: 'items_recycled',
+        createTable({
+          name: 'friends',
           columns: [
-            { name: "created_at", type: "number" },
-          ],
-        }),
+            { name: "friend_id", type: "string", isIndexed: true }
+          ]
+        })
       ],
     },
     ],

@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from '@nozbe/watermelondb'
 
 export default appSchema({
-  version: 2,
+  version: 3,
   tables: [
     tableSchema({
       name: "items_recycled",
@@ -21,6 +21,12 @@ export default appSchema({
         { name: "amount", type: "number" }
       ]
     }),
+    tableSchema({
+      name: 'friends',
+      columns: [
+        { name: "friend_id", type: "string", isIndexed: true }
+      ]
+    })
   ]
 });
 

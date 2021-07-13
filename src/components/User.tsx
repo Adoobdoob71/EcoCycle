@@ -2,29 +2,27 @@ import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {StyleProperty} from '../utils/Types';
-import {RippleButton, Column, Row} from './';
-import {User} from '@react-native-google-signin/google-signin';
+import {Column, Row} from './';
+import IconButton from './IconButton';
 
-interface FriendProps {
+interface UserProps {
   name?: string;
   familyName?: string;
   givenName?: string;
   email?: string;
   photo?: string;
   id?: string;
-  onPress?: () => void;
+  onPress: () => void;
   outerStyle?: StyleProperty;
+  disabled?: boolean;
 }
 
-const Friend: React.FC<FriendProps> = props => {
+const User: React.FC<UserProps> = props => {
   const {colors} = useTheme();
   const styles = classes(colors);
+
   return (
-    <RippleButton
-      onPress={props.onPress ? props.onPress : () => {}}
-      borderRadius={0}
-      innerStyle={styles.background}
-      outerStyle={props.outerStyle}>
+    <View style={[styles.background, props.outerStyle]}>
       <Image source={{uri: props.photo}} style={styles.profilePicture} />
       <Column style={{flex: 1}}>
         <Row style={{alignItems: 'center', marginBottom: 1}}>
@@ -32,7 +30,13 @@ const Friend: React.FC<FriendProps> = props => {
         </Row>
         <Text style={styles.email}>{props.email}</Text>
       </Column>
-    </RippleButton>
+      <IconButton
+        icon="plus"
+        onPress={props.onPress}
+        disabled={props.disabled}
+        borderless
+      />
+    </View>
   );
 };
 
@@ -62,4 +66,4 @@ function classes(colors: any) {
     },
   });
 }
-export default Friend;
+export default User;

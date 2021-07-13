@@ -7,6 +7,7 @@ import {
   Text,
   Image,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {Header, IconButton, Surface, Row, Column, Top} from '../components';
@@ -19,12 +20,20 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
 import {AuthContext} from '../utils/Auth';
 import firebase from 'firebase/app';
-import {UserData} from '../utils/Types';
+import {RecyclingDataType, UserData} from '../utils/Types';
 
 const Profile: React.FC<
   StackScreenProps<{ProfileScreen: {id: string}}, 'ProfileScreen'>
 > = props => {
+  const [loading, setLoading] = React.useState(true);
   const [userData, setUserData] = React.useState<UserData | null>(null);
+  const [recyclingDataFromToday, setRecyclingDataFromToday] = React.useState<
+    RecyclingDataType[]
+  >([]);
+  const [bottlesAmount, setBottlesAmount] = React.useState(0);
+  const [itemsRecycledPercentage, setItemsRecycledPercentage] =
+    React.useState(0);
+
   const {colors} = useTheme();
   const styles = classes(colors);
 
@@ -34,19 +43,58 @@ const Profile: React.FC<
   const {userInfo} = React.useContext(AuthContext);
 
   const loadData = async () => {
-    let result = await firebase
-      .database()
-      .ref('users')
-      .child(props.route.params.id)
-      .get();
-    setUserData(result.val());
+    try {
+      const date = new Date();
+      date.setDate(date.getDate() - 1);
+      let userProfile = await firebase
+        .database()
+        .ref('users')
+        .child(props.route.params.id)
+        .get();
+      let recyclingDataToday = await firebase
+        .database()
+        .ref('users')
+        .child(props.route.params.id)
+        .child('recycling')
+        .orderByChild('created_at')
+        .startAt(date.getMilliseconds())
+        .get();
+
+      let itemsCount = 0;
+      recyclingDataToday.forEach(item => {
+        setRecyclingDataFromToday(currentData => [...currentData, item.val()]);
+        setBottlesAmount(bottles => bottles + item.val().bottles);
+        itemsCount +=
+          item.val().bottles +
+          item.val().plastic_items +
+          item.val().metallic_items +
+          item.val().plastic_items;
+      });
+      setItemsRecycledPercentage(
+        Math.round((0 / (itemsCount === 0 ? 1 : itemsCount)) * 100),
+      );
+      setUserData(userProfile.val());
+      setLoading(false);
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   React.useEffect(() => {
     loadData();
   }, []);
 
-  return (
+  return loading ? (
+    <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
+      <Header
+        left={<IconButton icon="arrow-left" onPress={goBack} borderless />}
+        title="Profile"
+      />
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    </SafeAreaView>
+  ) : (
     <ScrollView
       style={{flex: 1}}
       stickyHeaderIndices={[0]}
@@ -78,11 +126,15 @@ const Profile: React.FC<
               rotation={0}
               size={100}
               width={2}
-              fill={(10 / 25) * 100}
+              fill={(0 / bottlesAmount) * 100}
               tintColor={colors.primary}
               backgroundColor={colors.placeholder}
               style={{marginVertical: 12}}>
-              {fill => <Text style={styles.recycledBottlesAmount}>10/25</Text>}
+              {fill => (
+                <Text style={styles.recycledBottlesAmount}>
+                  0/{bottlesAmount}
+                </Text>
+              )}
             </AnimatedCircularProgress>
             <Text style={styles.recycledBottlesGreeting}>Bottles recycled</Text>
           </Column>
@@ -91,14 +143,18 @@ const Profile: React.FC<
               rotation={0}
               size={100}
               width={2}
-              fill={53}
+              fill={itemsRecycledPercentage}
               tintColor={colors.primary}
               backgroundColor={colors.placeholder}
               style={{marginVertical: 12}}>
-              {fill => <Text style={styles.recycledBottlesAmount}>53%</Text>}
+              {fill => (
+                <Text style={styles.recycledBottlesAmount}>
+                  {itemsRecycledPercentage}%
+                </Text>
+              )}
             </AnimatedCircularProgress>
             <Text style={styles.recycledBottlesGreeting}>
-              53% items recycled
+              {itemsRecycledPercentage}% items recycled
             </Text>
           </Column>
         </Row>
@@ -109,10 +165,19 @@ const Profile: React.FC<
         </Top>
         <BarChart
           data={{
-            labels: ['30/6', '29/6', '28/6', '27/6'],
+            labels: recyclingDataFromToday
+              .slice(0, 3)
+              .map(
+                item =>
+                  new Date(item.created_at).getDate() +
+                  '/' +
+                  (new Date(item.created_at).getMonth() + 1),
+              ),
             datasets: [
               {
-                data: [23, 17, 19, 10],
+                data: recyclingDataFromToday
+                  .slice(0, 3)
+                  .map(item => item.bottles),
               },
             ],
           }}

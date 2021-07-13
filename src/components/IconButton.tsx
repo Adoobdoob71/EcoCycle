@@ -17,6 +17,7 @@ interface IconButtonProps {
   innerStyle?: StyleProperty;
   onPress: () => void;
   borderless?: boolean;
+  disabled?: boolean;
 }
 
 const IconButton: React.FC<IconButtonProps> = props => {
@@ -33,22 +34,38 @@ const IconButton: React.FC<IconButtonProps> = props => {
         background={TouchableNativeFeedback.Ripple(
           `${colors.placeholder}${convertOpacityToHex(0.4)}`,
           true,
-        )}>
+        )}
+        disabled={props.disabled}>
         <View style={[props.innerStyle, styles.background]}>
           <MaterialCommunityIcons
             name={props.icon}
-            color={props.color ? props.color : colors.text}
+            color={
+              props.disabled
+                ? colors.placeholder
+                : props.color
+                ? props.color
+                : colors.text
+            }
             size={props.size ? props.size : 18}
           />
         </View>
       </TouchableNativeFeedback>
     </View>
   ) : (
-    <TouchableOpacity onPress={props.onPress} style={props.style}>
+    <TouchableOpacity
+      onPress={props.onPress}
+      style={props.style}
+      disabled={props.disabled}>
       <View style={[props.innerStyle, styles.background]}>
         <MaterialCommunityIcons
           name={props.icon}
-          color={props.color ? props.color : colors.text}
+          color={
+            props.disabled
+              ? colors.placeholder
+              : props.color
+              ? props.color
+              : colors.text
+          }
           size={props.size ? props.size : 18}
         />
       </View>

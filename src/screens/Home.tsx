@@ -8,7 +8,7 @@ import {
   Text,
   Dimensions,
 } from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {ActivityIndicator, useTheme} from 'react-native-paper';
 import {
   Header,
   Card,
@@ -40,14 +40,13 @@ const Home: React.FC = () => {
   const styles = classes(colors);
   const navigation = useNavigation<any>();
 
+  const [loading, setLoading] = React.useState(true);
   const [bottlesAmount, setBottlesAmount] = React.useState(0);
   const [itemsRecycledPercentage, setItemsRecycledPercentage] =
     React.useState(0);
-
   const [recyclingData, setRecyclingData] = React.useState<RecyclingDataType[]>(
     [],
   );
-
   const [modalContentIndex, setModalContentIndex] = React.useState<number>(1);
 
   const {updateUserInfo, userInfo} = React.useContext(AuthContext);
@@ -110,7 +109,7 @@ const Home: React.FC = () => {
       recycledItems.map((item: any) => {
         setBottlesAmount(bottles => bottles + item.bottles);
         recycledItemsCount +=
-          item.plasticItems + item.metallicItems + item.paperItems;
+          item.plastic_items + item.metallic_items + item.paper_items;
       });
       setItemsRecycledPercentage(Math.round((8 / recycledItemsCount) * 100));
       date.setDate(date.getDate() - 7);
@@ -120,12 +119,22 @@ const Home: React.FC = () => {
       recycledItemsDuringWeek.map((item: any) => {
         setRecyclingData(recyclingData => [...recyclingData, item]);
       });
+      setLoading(false);
     } catch (error) {
       console.error(error.message);
+      setLoading(false);
     }
   };
 
-  return (
+  return loading ? (
+    <SafeAreaView
+      style={[
+        styles.mainView,
+        {justifyContent: 'center', alignItems: 'center'},
+      ]}>
+      <ActivityIndicator size="large" color={colors.primary} />
+    </SafeAreaView>
+  ) : (
     <SafeAreaView style={styles.mainView}>
       <ScrollView
         style={{flex: 1}}
@@ -229,9 +238,9 @@ const Home: React.FC = () => {
                   .slice(recyclingData.length - 3, recyclingData.length)
                   .map(
                     item =>
-                      item.createdAt.getDate() +
+                      item.created_at.getDate() +
                       '/' +
-                      (item.createdAt.getMonth() + 1),
+                      (item.created_at.getMonth() + 1),
                   ),
                 datasets: [
                   {

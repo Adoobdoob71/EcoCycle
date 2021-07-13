@@ -4,6 +4,7 @@ import DrawerNavigator from './DrawerNavigator';
 import ScanQR from '../screens/ScanQR';
 import Profile from '../screens/Profile';
 import SignIn from '../screens/SignIn';
+import Search from '../screens/Search';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ const StackNavigator: React.FC = () => {
       <Stack.Screen name="ScanScreen" component={ScanQR} />
       <Stack.Screen name="ProfileScreen" component={Profile} />
       <Stack.Screen name="SigninScreen" component={SignIn} />
+      <Stack.Screen name="SearchScreen" component={Search} />
     </Stack.Navigator>
   );
 };

@@ -13,7 +13,7 @@ import {Database} from '@nozbe/watermelondb';
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 import Schema from './src/utils/model/Schema';
 import Migrations from './src/utils/model/Migrations';
-import {RecycleProgress} from './src/utils/model/Models';
+import {Friend, RecycleProgress} from './src/utils/model/Models';
 // import Post from './model/Post' // ⬅️ You'll import your Models here
 
 // First, create the adapter to the underlying database:
@@ -35,7 +35,7 @@ const adapter = new SQLiteAdapter({
 // Then, make a Watermelon database from it!
 export const watermelonDatabase = new Database({
   adapter,
-  modelClasses: [RecycleProgress],
+  modelClasses: [RecycleProgress, Friend],
   actionsEnabled: true,
 });
 

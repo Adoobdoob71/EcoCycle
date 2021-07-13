@@ -4,11 +4,10 @@ import {useTheme} from 'react-native-paper';
 import {BarCodeReadEvent, RNCamera} from 'react-native-camera';
 import {Dimensions} from 'react-native';
 import {RecyclingDataType} from '../utils/Types';
-import firebase from 'firebase/app';
 import {AuthContext} from '../utils/Auth';
 import {watermelonDatabase} from '../..';
-import {RecycleProgress} from '../utils/model/Models';
 import {useNavigation} from '@react-navigation/native';
+import firebase from 'firebase/app';
 
 const RecieptScanner: React.FC = () => {
   const [scanned, setScanned] = React.useState(false);
@@ -31,12 +30,18 @@ const RecieptScanner: React.FC = () => {
       const recyclingData = watermelonDatabase.get('items_recycled');
       await watermelonDatabase.action(async () => {
         const data = await recyclingData.create((item: any) => {
-          item._raw.all_items = barCodeData.allItems;
+          item._raw.all_items = barCodeData.all_items;
           item._raw.bottles = barCodeData.bottles;
-          item._raw.plastic_items = barCodeData.plasticItems;
-          item._raw.metallic_items = barCodeData.metallicItems;
-          item._raw.paper_items = barCodeData.paperItems;
+          item._raw.plastic_items = barCodeData.plastic_items;
+          item._raw.metallic_items = barCodeData.metallic_items;
+          item._raw.paper_items = barCodeData.paper_items;
         });
+        await firebase
+          .database()
+          .ref(`users/${userInfo?.user.id}`)
+          .child('recycling')
+          .push()
+          .set(data._raw);
       });
     } catch (error) {
       console.error(error);
