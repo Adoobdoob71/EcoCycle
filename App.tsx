@@ -3,7 +3,6 @@ import * as React from 'react';
 import {Appearance, StatusBar} from 'react-native';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {Provider as PaperProvider} from 'react-native-paper';
-import StackNavigator from './src/navigation/StackNavigator';
 import {
   DarkAppTheme,
   LightAppTheme,
@@ -16,6 +15,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import {AuthContext} from './src/utils/Auth';
+import AuthNavigator from './src/navigation/AuthNavigator';
 
 export default function App() {
   const [isThemeDark, setIsThemeDark] = React.useState<boolean>(true);
@@ -74,7 +74,7 @@ export default function App() {
         <PreferencesContext.Provider value={preferencers}>
           <NavigationContainer theme={theme}>
             <PaperProvider theme={theme}>
-              <StackNavigator />
+              <AuthNavigator />
             </PaperProvider>
           </NavigationContainer>
         </PreferencesContext.Provider>

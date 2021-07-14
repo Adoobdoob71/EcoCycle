@@ -5,8 +5,8 @@ import {StyleProperty} from '../utils/Types';
 import {ProgressBar} from './';
 
 interface PeerProgressProps {
-  nickname: string;
-  profile_picture: string;
+  nickname?: string | null;
+  profile_picture?: string | null;
   progressValue: number;
   outerStyle?: StyleProperty;
   isUser?: boolean;

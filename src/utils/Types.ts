@@ -12,10 +12,17 @@ export interface UserData {
 }
 
 export interface RecyclingDataType {
-	all_items?: any; 
-  bottles?: any;
-  plastic_items?: any;
-  metallic_items?: any;
-  paper_items?: any;
-  created_at?: any;
+	all_items: number; 
+  bottles: number;
+  plastic_items: number;
+  metallic_items: number;
+  paper_items: number;
+  created_at: number;
+}
+
+export interface UserRecyclingData {
+	bottlesToRecycleAmount: number;
+	bottlesRecycledAmount: number;
+	itemsToRecycleAmount: number;
+	itemsRecycledAmount: number;
 }

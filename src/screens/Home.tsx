@@ -7,6 +7,7 @@ import {
   Image,
   Text,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 import {ActivityIndicator, useTheme} from 'react-native-paper';
 import {
@@ -17,6 +18,7 @@ import {
   PeerProgress,
   Row,
   Column,
+  Surface,
 } from '../components';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
@@ -31,9 +33,9 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import {AuthContext} from '../utils/Auth';
-import {watermelonDatabase} from '../..';
 import {Q} from '@nozbe/watermelondb';
-import {RecyclingDataType} from '../utils/Types';
+import {RecyclingDataType, UserRecyclingData} from '../utils/Types';
+import firebase from 'firebase/app';
 
 const Home: React.FC = () => {
   const {colors} = useTheme();
@@ -41,13 +43,22 @@ const Home: React.FC = () => {
   const navigation = useNavigation<any>();
 
   const [loading, setLoading] = React.useState(true);
-  const [bottlesAmount, setBottlesAmount] = React.useState(0);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [itemsRecycledDataFromToday, setItemsRecycledDataFromToday] =
+    React.useState<RecyclingDataType[]>([]);
+  const [itemsToRecycleDataToday, setItemsToRecycleDataToday] = React.useState<
+    RecyclingDataType[]
+  >([]);
+
+  const [bottlesToRecycleAmount, setBottlesToRecycleAmount] = React.useState(0);
+  const [bottlesRecycledAmount, setBottlesRecycledAmount] = React.useState(0);
   const [itemsRecycledPercentage, setItemsRecycledPercentage] =
     React.useState(0);
-  const [recyclingData, setRecyclingData] = React.useState<RecyclingDataType[]>(
-    [],
-  );
-  const [modalContentIndex, setModalContentIndex] = React.useState<number>(1);
+
+  const [friendsRecyclingData, setFriendsRecyclingData] = React.useState<
+    {photo: string; name: string; percentage: number; id: string}[]
+  >([]);
+  const [modalContentIndex, setModalContentIndex] = React.useState(1);
 
   const {updateUserInfo, userInfo} = React.useContext(AuthContext);
 
@@ -55,21 +66,7 @@ const Home: React.FC = () => {
 
   const snapPoints = React.useMemo(() => [0, '25%', '50%'], []);
 
-  const modalContentNav = () => {
-    switch (modalContentIndex) {
-      case 2:
-        return <RecyclingHistory />;
-      case 3:
-        return <PeersRecycling />;
-      default:
-        return null;
-    }
-  };
-
-  const changeModalNav = (index: number) => {
-    setModalContentIndex(index);
-    bottomSheetRef.current?.snapTo(1);
-  };
+  const openModal = () => bottomSheetRef.current?.snapTo(1);
 
   const openDrawer = () => navigation.openDrawer();
   const goToProfile = () =>
@@ -83,6 +80,7 @@ const Home: React.FC = () => {
     try {
       const userInfo = await GoogleSignin.signInSilently();
       updateUserInfo(userInfo);
+      readData(userInfo?.user.id);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_REQUIRED) {
         navigation.navigate('SigninScreen');
@@ -94,31 +92,82 @@ const Home: React.FC = () => {
 
   React.useEffect(() => {
     signIntoAccount();
-    readData();
   }, []);
 
-  const readData = async () => {
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setBottlesRecycledAmount(0);
+    setBottlesToRecycleAmount(0);
+    setItemsRecycledPercentage(0);
+    setItemsRecycledDataFromToday([]);
+    setItemsToRecycleDataToday([]);
+    setFriendsRecyclingData([]);
+    readData(userInfo?.user.id);
+    setRefreshing(false);
+  };
+
+  const readData = async (id?: string) => {
     try {
-      const data = watermelonDatabase.get('items_recycled');
-      const date = new Date();
-      date.setDate(date.getDate() - 1);
-      const recycledItems = await data
-        .query(Q.where('created_at', Q.gt(date.getMilliseconds())))
-        .fetch();
-      let recycledItemsCount = 0;
-      recycledItems.map((item: any) => {
-        setBottlesAmount(bottles => bottles + item.bottles);
-        recycledItemsCount +=
-          item.plastic_items + item.metallic_items + item.paper_items;
-      });
-      setItemsRecycledPercentage(Math.round((8 / recycledItemsCount) * 100));
-      date.setDate(date.getDate() - 7);
-      const recycledItemsDuringWeek = await data
-        .query(Q.where('created_at', Q.gt(date.getMilliseconds())))
-        .fetch();
-      recycledItemsDuringWeek.map((item: any) => {
-        setRecyclingData(recyclingData => [...recyclingData, item]);
-      });
+      if (id) {
+        let data = await firebase
+          .database()
+          .ref('users')
+          .child(id)
+          .child('recycling_brief')
+          .get();
+        let recyclingData = data.val() as UserRecyclingData;
+        setBottlesRecycledAmount(recyclingData.bottlesRecycledAmount);
+        setBottlesToRecycleAmount(recyclingData.bottlesToRecycleAmount);
+        setItemsRecycledPercentage(
+          Math.round(
+            (recyclingData.itemsRecycledAmount /
+              recyclingData.itemsToRecycleAmount) *
+              100,
+          ),
+        );
+        const date = new Date();
+        date.setDate(date.getDate() - 1);
+        let itemsRecycledDataToday = await firebase
+          .database()
+          .ref('users')
+          .child(id)
+          .child('recycling')
+          .child('already_recycled')
+          .orderByChild('created_at')
+          .startAt(date.getMilliseconds())
+          .get();
+        itemsRecycledDataToday.forEach(item => {
+          setItemsRecycledDataFromToday(currentData => [
+            ...currentData,
+            item.val(),
+          ]);
+        });
+        let friendsData = await firebase
+          .database()
+          .ref('users')
+          .child(id)
+          .child('friends')
+          .get();
+        friendsData.forEach(item => {
+          firebase
+            .database()
+            .ref('users')
+            .child(item.val().friend_id)
+            .once('value', snapshot => {
+              setFriendsRecyclingData(friends => [
+                ...friends,
+                {
+                  photo: snapshot.val().photo,
+                  name: snapshot.val().name,
+                  percentage:
+                    snapshot.val().recycling_brief.itemsRecycledAmount /
+                    snapshot.val().recycling_brief.itemsToRecycleAmount,
+                  id: item.val().friend_id,
+                },
+              ]);
+            });
+        });
+      }
       setLoading(false);
     } catch (error) {
       console.error(error.message);
@@ -141,6 +190,14 @@ const Home: React.FC = () => {
         stickyHeaderIndices={[0]}
         showsVerticalScrollIndicator={false}
         bounces={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary]}
+            progressBackgroundColor={colors.backdrop}
+          />
+        }
         overScrollMode="never">
         <Header
           left={
@@ -178,9 +235,9 @@ const Home: React.FC = () => {
           subtitle="Planning on recycling more?"
         />
         <View style={styles.contentView}>
-          <Card
-            onPress={() => changeModalNav(1)}
-            innerStyle={{
+          <Surface
+            direction="column"
+            style={{
               padding: 12,
             }}>
             <Row style={{alignItems: 'center', justifyContent: 'space-around'}}>
@@ -189,13 +246,17 @@ const Home: React.FC = () => {
                   rotation={0}
                   size={100}
                   width={2}
-                  fill={(0 / bottlesAmount) * 100}
+                  fill={(bottlesRecycledAmount / bottlesToRecycleAmount) * 100}
                   tintColor={colors.primary}
                   backgroundColor={colors.placeholder}
                   style={{marginVertical: 12}}>
                   {fill => (
-                    <Text style={styles.recycledBottlesAmount}>
-                      0/{bottlesAmount}
+                    <Text
+                      style={[
+                        styles.recycledBottlesAmount,
+                        {color: fill === 100 ? colors.accent : colors.text},
+                      ]}>
+                      {bottlesRecycledAmount}/{bottlesToRecycleAmount}
                     </Text>
                   )}
                 </AnimatedCircularProgress>
@@ -213,20 +274,24 @@ const Home: React.FC = () => {
                   backgroundColor={colors.placeholder}
                   style={{marginVertical: 12}}>
                   {fill => (
-                    <Text style={styles.recycledBottlesAmount}>
+                    <Text
+                      style={[
+                        styles.recycledBottlesAmount,
+                        {color: fill === 100 ? colors.accent : colors.text},
+                      ]}>
                       {itemsRecycledPercentage}%
                     </Text>
                   )}
                 </AnimatedCircularProgress>
                 <Text style={styles.recycledBottlesGreeting}>
-                  {itemsRecycledPercentage}% items recycled
+                  Items recycled
                 </Text>
               </Column>
             </Row>
-          </Card>
-          <Card
-            onPress={() => changeModalNav(2)}
-            outerStyle={{
+          </Surface>
+          <Surface
+            direction="column"
+            style={{
               marginVertical: 12,
             }}>
             <Top textStyle={{margin: 4, marginVertical: 2, fontSize: 18}}>
@@ -234,18 +299,24 @@ const Home: React.FC = () => {
             </Top>
             <BarChart
               data={{
-                labels: recyclingData
-                  .slice(recyclingData.length - 3, recyclingData.length)
+                labels: itemsRecycledDataFromToday
+                  .slice(
+                    itemsRecycledDataFromToday.length - 3,
+                    itemsRecycledDataFromToday.length,
+                  )
                   .map(
                     item =>
-                      item.created_at.getDate() +
+                      new Date(item.created_at).getDate() +
                       '/' +
-                      (item.created_at.getMonth() + 1),
+                      (new Date(item.created_at).getMonth() + 1),
                   ),
                 datasets: [
                   {
-                    data: recyclingData
-                      .slice(recyclingData.length - 3, recyclingData.length)
+                    data: itemsRecycledDataFromToday
+                      .slice(
+                        itemsRecycledDataFromToday.length - 3,
+                        itemsRecycledDataFromToday.length,
+                      )
                       .map(item => item.bottles),
                   },
                 ],
@@ -268,10 +339,8 @@ const Home: React.FC = () => {
               }}
               style={{marginVertical: 8, alignSelf: 'center', borderRadius: 8}}
             />
-          </Card>
-          <Card
-            onPress={() => changeModalNav(3)}
-            outerStyle={{marginBottom: 12}}>
+          </Surface>
+          <Card onPress={openModal} outerStyle={{marginBottom: 12}}>
             <Top
               style={{margin: 4, marginVertical: 2}}
               textStyle={{fontSize: 18}}>
@@ -279,24 +348,20 @@ const Home: React.FC = () => {
             </Top>
             <View style={{margin: 8}}>
               <PeerProgress
-                nickname="Elad Mekonen"
-                profile_picture="https://avatars.githubusercontent.com/u/46420655?v=4"
+                nickname={userInfo?.user.name}
+                profile_picture={userInfo?.user.photo}
                 progressValue={itemsRecycledPercentage / 100}
                 outerStyle={{marginBottom: 6}}
                 isUser
               />
-              <PeerProgress
-                nickname="Devin Booker"
-                profile_picture="https://wallpaperaccess.com/full/5457303.png"
-                progressValue={0.4}
-                outerStyle={{marginBottom: 6}}
-              />
-              <PeerProgress
-                nickname="Chris Paul"
-                profile_picture="https://64.media.tumblr.com/644ea9b4a3baa8d8b6c362422686fb34/tumblr_pg90ks4V2s1xu7jxzo1_1280.png"
-                progressValue={0.8}
-                outerStyle={{marginBottom: 6}}
-              />
+              {friendsRecyclingData.slice(0, 2).map(item => (
+                <PeerProgress
+                  nickname={item.name}
+                  profile_picture={item.photo}
+                  progressValue={item.percentage}
+                  outerStyle={{marginBottom: 6}}
+                />
+              ))}
             </View>
           </Card>
         </View>
@@ -311,7 +376,10 @@ const Home: React.FC = () => {
         )}
         snapPoints={snapPoints}>
         <BottomSheetScrollView style={styles.bottomSheetsBackground}>
-          <SafeAreaView>{modalContentNav()}</SafeAreaView>
+          <PeersRecycling
+            friendsData={friendsRecyclingData}
+            progressValue={bottlesRecycledAmount / bottlesToRecycleAmount}
+          />
         </BottomSheetScrollView>
       </BottomSheet>
     </SafeAreaView>

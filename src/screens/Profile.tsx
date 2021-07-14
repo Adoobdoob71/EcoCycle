@@ -20,17 +20,21 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
 import {AuthContext} from '../utils/Auth';
 import firebase from 'firebase/app';
-import {RecyclingDataType, UserData} from '../utils/Types';
+import {RecyclingDataType, UserData, UserRecyclingData} from '../utils/Types';
 
 const Profile: React.FC<
   StackScreenProps<{ProfileScreen: {id: string}}, 'ProfileScreen'>
 > = props => {
   const [loading, setLoading] = React.useState(true);
   const [userData, setUserData] = React.useState<UserData | null>(null);
-  const [recyclingDataFromToday, setRecyclingDataFromToday] = React.useState<
+  const [itemsRecycledDataFromToday, setItemsRecycledDataFromToday] =
+    React.useState<RecyclingDataType[]>([]);
+  const [itemsToRecycleDataToday, setItemsToRecycleDataToday] = React.useState<
     RecyclingDataType[]
   >([]);
-  const [bottlesAmount, setBottlesAmount] = React.useState(0);
+
+  const [bottlesToRecycleAmount, setBottlesToRecycleAmount] = React.useState(0);
+  const [bottlesRecycledAmount, setBottlesRecycledAmount] = React.useState(0);
   const [itemsRecycledPercentage, setItemsRecycledPercentage] =
     React.useState(0);
 
@@ -44,6 +48,22 @@ const Profile: React.FC<
 
   const loadData = async () => {
     try {
+      let data = await firebase
+        .database()
+        .ref('users')
+        .child(props.route.params.id)
+        .child('recycling_brief')
+        .get();
+      let recyclingData = data.val() as UserRecyclingData;
+      setBottlesRecycledAmount(recyclingData.bottlesRecycledAmount);
+      setBottlesToRecycleAmount(recyclingData.bottlesToRecycleAmount);
+      setItemsRecycledPercentage(
+        Math.round(
+          (recyclingData.itemsRecycledAmount /
+            recyclingData.itemsToRecycleAmount) *
+            100,
+        ),
+      );
       const date = new Date();
       date.setDate(date.getDate() - 1);
       let userProfile = await firebase
@@ -51,28 +71,21 @@ const Profile: React.FC<
         .ref('users')
         .child(props.route.params.id)
         .get();
-      let recyclingDataToday = await firebase
+      let itemsRecycledDataToday = await firebase
         .database()
         .ref('users')
         .child(props.route.params.id)
         .child('recycling')
+        .child('already_recycled')
         .orderByChild('created_at')
         .startAt(date.getMilliseconds())
         .get();
-
-      let itemsCount = 0;
-      recyclingDataToday.forEach(item => {
-        setRecyclingDataFromToday(currentData => [...currentData, item.val()]);
-        setBottlesAmount(bottles => bottles + item.val().bottles);
-        itemsCount +=
-          item.val().bottles +
-          item.val().plastic_items +
-          item.val().metallic_items +
-          item.val().plastic_items;
+      itemsRecycledDataToday.forEach(item => {
+        setItemsRecycledDataFromToday(currentData => [
+          ...currentData,
+          item.val(),
+        ]);
       });
-      setItemsRecycledPercentage(
-        Math.round((0 / (itemsCount === 0 ? 1 : itemsCount)) * 100),
-      );
       setUserData(userProfile.val());
       setLoading(false);
     } catch (error) {
@@ -126,13 +139,13 @@ const Profile: React.FC<
               rotation={0}
               size={100}
               width={2}
-              fill={(0 / bottlesAmount) * 100}
+              fill={(bottlesRecycledAmount / bottlesToRecycleAmount) * 100}
               tintColor={colors.primary}
               backgroundColor={colors.placeholder}
               style={{marginVertical: 12}}>
               {fill => (
                 <Text style={styles.recycledBottlesAmount}>
-                  0/{bottlesAmount}
+                  {bottlesRecycledAmount}/{bottlesToRecycleAmount}
                 </Text>
               )}
             </AnimatedCircularProgress>
@@ -153,9 +166,7 @@ const Profile: React.FC<
                 </Text>
               )}
             </AnimatedCircularProgress>
-            <Text style={styles.recycledBottlesGreeting}>
-              {itemsRecycledPercentage}% items recycled
-            </Text>
+            <Text style={styles.recycledBottlesGreeting}>Items recycled</Text>
           </Column>
         </Row>
       </Surface>
@@ -165,7 +176,7 @@ const Profile: React.FC<
         </Top>
         <BarChart
           data={{
-            labels: recyclingDataFromToday
+            labels: itemsRecycledDataFromToday
               .slice(0, 3)
               .map(
                 item =>
@@ -175,7 +186,7 @@ const Profile: React.FC<
               ),
             datasets: [
               {
-                data: recyclingDataFromToday
+                data: itemsRecycledDataFromToday
                   .slice(0, 3)
                   .map(item => item.bottles),
               },

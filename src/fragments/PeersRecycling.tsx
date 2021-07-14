@@ -1,30 +1,48 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {SafeAreaView, StyleSheet, View, Text} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {Top, PeerProgress, RippleButton} from '../components';
+import {AuthContext} from '../utils/Auth';
 
-const PeersRecycling: React.FC = () => {
+interface PeersRecyclingProps {
+  friendsData: {photo: string; name: string; percentage: number; id: string}[];
+  progressValue: number;
+}
+
+const PeersRecycling: React.FC<PeersRecyclingProps> = props => {
   const {colors} = useTheme();
   const styles = classes(colors);
+  const {userInfo} = React.useContext(AuthContext);
+  const navigation = useNavigation();
+
+  const navigateToProfile = (id?: string) =>
+    navigation.navigate('ProfileScreen', {id: id});
   return (
     <SafeAreaView style={styles.background}>
-      <Top textStyle={{ fontSize: 18 }}>You vs Your Peers</Top>
+      <Top textStyle={{fontSize: 18}}>You vs Your Peers</Top>
       <View style={styles.peersView}>
-        <RippleButton onPress={() => {}} outerStyle={{marginBottom: 10}}>
+        <RippleButton
+          onPress={() => navigateToProfile(userInfo?.user.id)}
+          outerStyle={{marginBottom: 10}}>
           <PeerProgress
-            nickname="Elad Mekonen"
-            profile_picture="https://avatars.githubusercontent.com/u/46420655?v=4"
-            progressValue={0.64}
+            nickname={userInfo?.user.name}
+            profile_picture={userInfo?.user.photo}
+            progressValue={props.progressValue}
             isUser
           />
         </RippleButton>
-        <RippleButton onPress={() => {}} outerStyle={{marginBottom: 10}}>
-          <PeerProgress
-            nickname="Devin Booker"
-            profile_picture="https://wallpaperaccess.com/full/5457303.png"
-            progressValue={0.4}
-          />
-        </RippleButton>
+        {props.friendsData.map(item => (
+          <RippleButton
+            onPress={() => navigateToProfile(item.id)}
+            outerStyle={{marginBottom: 10}}>
+            <PeerProgress
+              nickname={item.name}
+              profile_picture={item.photo}
+              progressValue={item.percentage}
+            />
+          </RippleButton>
+        ))}
       </View>
     </SafeAreaView>
   );

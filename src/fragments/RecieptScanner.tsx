@@ -5,7 +5,6 @@ import {BarCodeReadEvent, RNCamera} from 'react-native-camera';
 import {Dimensions} from 'react-native';
 import {RecyclingDataType} from '../utils/Types';
 import {AuthContext} from '../utils/Auth';
-import {watermelonDatabase} from '../..';
 import {useNavigation} from '@react-navigation/native';
 import firebase from 'firebase/app';
 
@@ -20,6 +19,7 @@ const RecieptScanner: React.FC = () => {
 
   const readBarcode = async (event: BarCodeReadEvent) => {
     if (scanned) return;
+    setScanned(true);
     const barCodeData = JSON.parse(event.data);
     await recordData(barCodeData);
     navigation.goBack();
@@ -27,26 +27,30 @@ const RecieptScanner: React.FC = () => {
 
   const recordData = async (barCodeData: RecyclingDataType) => {
     try {
-      const recyclingData = watermelonDatabase.get('items_recycled');
-      await watermelonDatabase.action(async () => {
-        const data = await recyclingData.create((item: any) => {
-          item._raw.all_items = barCodeData.all_items;
-          item._raw.bottles = barCodeData.bottles;
-          item._raw.plastic_items = barCodeData.plastic_items;
-          item._raw.metallic_items = barCodeData.metallic_items;
-          item._raw.paper_items = barCodeData.paper_items;
-        });
+      if (userInfo?.user.id) {
+        let data: RecyclingDataType = {
+          ...barCodeData,
+          created_at: Date.now(),
+        };
         await firebase
           .database()
           .ref(`users/${userInfo?.user.id}`)
           .child('recycling')
+          .child('to_recycle')
           .push()
-          .set(data._raw);
-      });
+          .set(data);
+        const updates: any = {};
+        updates[
+          `users/${userInfo?.user.id}/recycling_brief/bottlesToRecycleAmount`
+        ] = firebase.database.ServerValue.increment(data.bottles);
+        updates[
+          `users/${userInfo?.user.id}/recycling_brief/itemsToRecycleAmount`
+        ] = firebase.database.ServerValue.increment(data.all_items);
+        await firebase.database().ref().update(updates);
+      }
     } catch (error) {
       console.error(error);
     }
-    setScanned(true);
   };
 
   return (

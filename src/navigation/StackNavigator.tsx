@@ -5,10 +5,19 @@ import ScanQR from '../screens/ScanQR';
 import Profile from '../screens/Profile';
 import SignIn from '../screens/SignIn';
 import Search from '../screens/Search';
+import {useNavigation} from '@react-navigation/native';
+import firebase from 'firebase/app';
+import {AuthContext} from '../utils/Auth';
 
 const Stack = createStackNavigator();
 
 const StackNavigator: React.FC = () => {
+  const navigation = useNavigation();
+
+  React.useEffect(() => {
+    navigation.addListener('beforeRemove', e => e.preventDefault());
+  }, []);
+
   return (
     <Stack.Navigator
       initialRouteName="DrawerNavigator"
@@ -16,7 +25,6 @@ const StackNavigator: React.FC = () => {
       <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
       <Stack.Screen name="ScanScreen" component={ScanQR} />
       <Stack.Screen name="ProfileScreen" component={Profile} />
-      <Stack.Screen name="SigninScreen" component={SignIn} />
       <Stack.Screen name="SearchScreen" component={Search} />
     </Stack.Navigator>
   );

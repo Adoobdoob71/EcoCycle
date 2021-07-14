@@ -9,11 +9,11 @@ import {useTheme} from 'react-native-paper';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {AuthContext} from '../utils/Auth';
 import firebase from 'firebase/app';
+import {DevSettings} from 'react-native';
 
 const Settings: React.FC = () => {
   const navigation = useNavigation();
   const goBack = () => navigation.goBack();
-  const navigateToSignIn = () => navigation.navigate('SigninScreen');
 
   const {colors} = useTheme();
 
@@ -26,6 +26,7 @@ const Settings: React.FC = () => {
       await GoogleSignin.signOut();
       await firebase.auth().signOut();
       updateUserInfo(null);
+      DevSettings.reload();
     } catch (error) {
       console.error(error);
     }
@@ -57,12 +58,6 @@ const Settings: React.FC = () => {
         />
       </List.Section>
       <List.Section title="Account">
-        <List.Item
-          title="Sign In"
-          description="Sign into your account"
-          left={() => <List.Icon icon="account" color={colors.text} />}
-          onPress={navigateToSignIn}
-        />
         <List.Item
           title="Sign Out"
           description="Sign out of your account"

@@ -11,14 +11,15 @@ import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import {Header, IconButton, Friend} from '../components';
 import {useNavigation} from '@react-navigation/native';
 import {UserData} from '../utils/Types';
-import {watermelonDatabase} from '../..';
 import firebase from 'firebase/app';
+import {AuthContext} from '../utils/Auth';
 
 const Friends: React.FC = () => {
   const [friends, setFriends] = React.useState<UserData[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   const {colors} = useTheme();
+  const {userInfo} = React.useContext(AuthContext);
   const styles = classes(colors);
 
   const navigation = useNavigation<any>();
@@ -27,17 +28,23 @@ const Friends: React.FC = () => {
   const readData = async () => {
     setLoading(true);
     setFriends([]);
-    const data = watermelonDatabase.get('friends');
-    const friendsList = await data.query().fetch();
-    await Promise.all(
-      friendsList.map(async (item: any) => {
-        const friendData = await firebase
+    if (userInfo?.user.id) {
+      const data = await firebase
+        .database()
+        .ref('users')
+        .child(userInfo?.user.id)
+        .child('friends')
+        .get();
+      data.forEach(item => {
+        firebase
           .database()
-          .ref(`users/${item.friendId}`)
-          .get();
-        setFriends(friends => [...friends, friendData.val()]);
-      }),
-    );
+          .ref('users')
+          .child(item.val().friend_id)
+          .once('value', snapshot => {
+            setFriends(friends => [...friends, snapshot.val()]);
+          });
+      });
+    }
     setLoading(false);
   };
 

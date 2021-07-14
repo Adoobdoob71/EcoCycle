@@ -6,7 +6,6 @@ import {UserData} from '../utils/Types';
 import {Header, IconButton, User} from '../components';
 import {useNavigation} from '@react-navigation/native';
 import firebase from 'firebase/app';
-import {watermelonDatabase} from '../..';
 import {AuthContext} from '../utils/Auth';
 
 const Search: React.FC = () => {
@@ -22,12 +21,14 @@ const Search: React.FC = () => {
 
   const addFriend = async (friend: UserData) => {
     try {
-      const friends = watermelonDatabase.get('friends');
-      await watermelonDatabase.action(async () => {
-        await friends.create((item: any) => {
-          item._raw.friend_id = friend.id;
-        });
-      });
+      if (userInfo?.user.id) {
+        const friends = firebase
+          .database()
+          .ref('users')
+          .child(userInfo?.user.id)
+          .child('friends');
+        await friends.child(friend.id).set({friend_id: friend.id});
+      }
     } catch (error) {
       console.error(error);
     }
@@ -105,7 +106,7 @@ function classes(colors: any) {
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: colors.backdrop,
+      backgroundColor: colors.background,
       borderRadius: 8,
       paddingHorizontal: 4,
       marginHorizontal: 8,
