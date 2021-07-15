@@ -16,6 +16,7 @@ import {
 } from '@react-native-google-signin/google-signin';
 import {AuthContext} from './src/utils/Auth';
 import AuthNavigator from './src/navigation/AuthNavigator';
+import {TourGuideProvider} from 'rn-tourguide';
 
 export default function App() {
   const [isThemeDark, setIsThemeDark] = React.useState<boolean>(true);
@@ -70,15 +71,17 @@ export default function App() {
         barStyle={isThemeDark ? 'light-content' : 'dark-content'}
         animated
       />
-      <AuthContext.Provider value={auth}>
-        <PreferencesContext.Provider value={preferencers}>
-          <NavigationContainer theme={theme}>
-            <PaperProvider theme={theme}>
-              <AuthNavigator />
-            </PaperProvider>
-          </NavigationContainer>
-        </PreferencesContext.Provider>
-      </AuthContext.Provider>
+      <TourGuideProvider>
+        <AuthContext.Provider value={auth}>
+          <PreferencesContext.Provider value={preferencers}>
+            <NavigationContainer theme={theme}>
+              <PaperProvider theme={theme}>
+                <AuthNavigator />
+              </PaperProvider>
+            </NavigationContainer>
+          </PreferencesContext.Provider>
+        </AuthContext.Provider>
+      </TourGuideProvider>
     </>
   );
 }
