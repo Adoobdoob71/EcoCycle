@@ -12,7 +12,7 @@ interface RippleButtonProps {
   outerStyle?: StyleProperty;
   innerStyle?: StyleProperty;
   borderRadius?: number;
-  onPress: () => void;
+  onPress?: () => void;
   rippleColor?: string;
 }
 

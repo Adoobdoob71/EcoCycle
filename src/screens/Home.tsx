@@ -88,8 +88,11 @@ const Home: React.FC = () => {
 
   React.useEffect(() => {
     signIntoAccount();
-    if (canStart) start && start();
   }, []);
+
+  React.useEffect(() => {
+    if (canStart) start && start();
+  }, [canStart]);
 
   const signIntoAccount = async () => {
     try {
@@ -104,10 +107,6 @@ const Home: React.FC = () => {
       }
     }
   };
-
-  React.useEffect(() => {
-    signIntoAccount();
-  }, []);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -222,7 +221,7 @@ const Home: React.FC = () => {
           <Header
             left={
               <TourGuideZone
-                zone={5}
+                zone={6}
                 text="Click here for the menu"
                 shape="circle">
                 <IconButton
@@ -237,7 +236,7 @@ const Home: React.FC = () => {
             right={
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TourGuideZone
-                  zone={1}
+                  zone={2}
                   text="Here you can start scanning"
                   shape="circle">
                   <IconButton
@@ -330,6 +329,11 @@ const Home: React.FC = () => {
                 </Column>
               </Row>
             </Surface>
+          </TourGuideZone>
+          <TourGuideZone
+            zone={4}
+            text="Here you can see your recycling history"
+            borderRadius={8}>
             <Surface
               direction="column"
               style={{
@@ -388,7 +392,7 @@ const Home: React.FC = () => {
             </Surface>
           </TourGuideZone>
           <TourGuideZone
-            zone={4}
+            zone={5}
             text="And here you can compare yourself to friends!"
             shape="rectangle"
             borderRadius={8}>

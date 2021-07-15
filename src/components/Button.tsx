@@ -6,7 +6,7 @@ import {StyleProperty} from '../utils/Types';
 
 interface ButtonProps {
   text: string;
-  onPress: () => void;
+  onPress?: () => void;
   style?: StyleProperty;
   innerStyle?: StyleProperty;
   loading?: boolean;

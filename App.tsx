@@ -17,6 +17,7 @@ import {
 import {AuthContext} from './src/utils/Auth';
 import AuthNavigator from './src/navigation/AuthNavigator';
 import {TourGuideProvider} from 'rn-tourguide';
+import Tooltip from './src/components/Tooltip';
 
 export default function App() {
   const [isThemeDark, setIsThemeDark] = React.useState<boolean>(true);
@@ -71,17 +72,21 @@ export default function App() {
         barStyle={isThemeDark ? 'light-content' : 'dark-content'}
         animated
       />
-      <TourGuideProvider>
-        <AuthContext.Provider value={auth}>
-          <PreferencesContext.Provider value={preferencers}>
-            <NavigationContainer theme={theme}>
-              <PaperProvider theme={theme}>
+      <AuthContext.Provider value={auth}>
+        <PreferencesContext.Provider value={preferencers}>
+          <NavigationContainer theme={theme}>
+            <PaperProvider theme={theme}>
+              <TourGuideProvider
+                androidStatusBarVisible={false}
+                backdropColor={theme.colors.backdrop}
+                tooltipComponent={Tooltip}
+                verticalOffset={StatusBar.currentHeight}>
                 <AuthNavigator />
-              </PaperProvider>
-            </NavigationContainer>
-          </PreferencesContext.Provider>
-        </AuthContext.Provider>
-      </TourGuideProvider>
+              </TourGuideProvider>
+            </PaperProvider>
+          </NavigationContainer>
+        </PreferencesContext.Provider>
+      </AuthContext.Provider>
     </>
   );
 }
