@@ -37,11 +37,10 @@ import {Q} from '@nozbe/watermelondb';
 import {RecyclingDataType, UserRecyclingData} from '../utils/Types';
 import firebase from 'firebase/app';
 import {
-  TourGuideProvider, // Main provider
   TourGuideZone, // Main wrapper of highlight component
-  TourGuideZoneByPosition, // Component to use mask on overlay (ie, position absolute)
   useTourGuideController, // hook to start, etc.
 } from 'rn-tourguide';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home: React.FC = () => {
   const {colors} = useTheme();
@@ -64,7 +63,6 @@ const Home: React.FC = () => {
   const [friendsRecyclingData, setFriendsRecyclingData] = React.useState<
     {photo: string; name: string; percentage: number; id: string}[]
   >([]);
-  const [modalContentIndex, setModalContentIndex] = React.useState(1);
 
   const {updateUserInfo, userInfo} = React.useContext(AuthContext);
 
@@ -90,8 +88,12 @@ const Home: React.FC = () => {
     signIntoAccount();
   }, []);
 
-  React.useEffect(() => {
+  const startGuide = async () => {
     if (canStart) start && start();
+  };
+
+  React.useEffect(() => {
+    startGuide();
   }, [canStart]);
 
   const signIntoAccount = async () => {
@@ -278,7 +280,10 @@ const Home: React.FC = () => {
                 padding: 12,
               }}>
               <Row
-                style={{alignItems: 'center', justifyContent: 'space-around'}}>
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'space-around',
+                }}>
                 <Column style={{alignItems: 'center'}}>
                   <AnimatedCircularProgress
                     rotation={0}

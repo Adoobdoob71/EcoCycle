@@ -72,7 +72,6 @@ const SignIn: React.FC = () => {
     try {
       const reference = firebase.database().ref('users');
       let result = await reference.child(newUser.user.id).get();
-      console.log(result);
       if (result.exists())
         await reference.child(newUser.user.id).update(newUser.user);
       else

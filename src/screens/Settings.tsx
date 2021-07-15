@@ -10,6 +10,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {AuthContext} from '../utils/Auth';
 import firebase from 'firebase/app';
 import {DevSettings} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Settings: React.FC = () => {
   const navigation = useNavigation();
@@ -30,6 +31,10 @@ const Settings: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const showGuide = async () => {
+    DevSettings.reload();
   };
 
   return (
@@ -63,6 +68,14 @@ const Settings: React.FC = () => {
           description="Sign out of your account"
           left={() => <List.Icon icon="close" color={colors.error} />}
           onPress={signOut}
+        />
+      </List.Section>
+      <List.Section title="Miscellaneous">
+        <List.Item
+          title="Guide"
+          description="Show guide of the app"
+          left={() => <List.Icon icon="information" color={colors.text} />}
+          onPress={showGuide}
         />
       </List.Section>
     </ScrollView>
