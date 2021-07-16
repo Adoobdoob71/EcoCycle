@@ -229,7 +229,7 @@ const Home: React.FC = () => {
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <TourGuideZone
                   zone={2}
-                  text="Here you can start scanning"
+                  text="Here you can start scanning receipts for recyclable items and use NFC to scan recycled items"
                   shape="circle">
                   <IconButton
                     icon="barcode-scan"
@@ -337,7 +337,7 @@ const Home: React.FC = () => {
             </TourGuideZone>
             <TourGuideZone
               zone={4}
-              text="Here you can see your recycling history"
+              text="Here you can see your bottle recycling history"
               borderRadius={8}>
               <Surface
                 direction="column"
