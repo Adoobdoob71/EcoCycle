@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "2",
-    "@nozbe/watermelondb": "^0.22.0",
     "@react-native-async-storage/async-storage": "^1.15.5",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-google-signin/google-signin": "^6.0.1",
@@ -31,6 +30,7 @@
     "react-native-nfc-manager": "^3.8.0",
     "react-native-paper": "^4.9.1",
     "react-native-reanimated": "1",
+    "react-native-restart": "^0.0.22",
     "react-native-safe-area-context": "^3.2.0",
     "react-native-screens": "^3.3.0",
     "react-native-svg": "^12.1.1",
@@ -45,6 +45,7 @@
     "@react-native-community/eslint-config": "^2.0.0",
     "@types/jest": "^26.0.23",
     "@types/react-native": "^0.64.5",
+    "@types/react-native-restart": "^0.0.14",
     "@types/react-native-vector-icons": "^6.4.6",
     "@types/react-test-renderer": "^16.9.2",
     "babel-jest": "^26.6.3",
