@@ -16,7 +16,7 @@ const DrawerFragment: React.FC<
 > = props => {
   const {colors} = useTheme();
   const styles = classes(colors);
-  const {toggleTheme} = React.useContext(PreferencesContext);
+  const {toggleTheme, isThemeDark} = React.useContext(PreferencesContext);
 
   const {userInfo} = React.useContext(AuthContext);
 
@@ -86,7 +86,7 @@ const DrawerFragment: React.FC<
           marginHorizontal: 8,
         }}>
         <IconButton
-          icon="palette"
+          icon={isThemeDark ? 'weather-night' : 'white-balance-sunny'}
           onPress={toggleTheme}
           style={{marginHorizontal: 8}}
           borderless

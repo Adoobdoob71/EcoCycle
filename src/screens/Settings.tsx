@@ -11,6 +11,7 @@ import {AuthContext} from '../utils/Auth';
 import firebase from 'firebase/app';
 import {DevSettings} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNRestart from 'react-native-restart/src';
 
 const Settings: React.FC = () => {
   const navigation = useNavigation();
@@ -27,7 +28,7 @@ const Settings: React.FC = () => {
       await GoogleSignin.signOut();
       await firebase.auth().signOut();
       updateUserInfo(null);
-      DevSettings.reload();
+      RNRestart.Restart();
     } catch (error) {
       console.error(error);
     }
@@ -35,7 +36,7 @@ const Settings: React.FC = () => {
 
   const showGuide = async () => {
     await AsyncStorage.removeItem('already_launched');
-    DevSettings.reload();
+    RNRestart.Restart();
   };
 
   return (
