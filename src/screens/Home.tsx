@@ -27,19 +27,14 @@ import {BarChart} from 'react-native-chart-kit';
 import {convertOpacityToHex} from '../utils/usefulFunctions';
 import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import PeersRecycling from '../fragments/PeersRecycling';
-import RecyclingHistory from '../fragments/RecyclingHistory';
 import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import {AuthContext} from '../utils/Auth';
-import {Q} from '@nozbe/watermelondb';
 import {RecyclingDataType, UserRecyclingData} from '../utils/Types';
 import firebase from 'firebase/app';
-import {
-  TourGuideZone, // Main wrapper of highlight component
-  useTourGuideController, // hook to start, etc.
-} from 'rn-tourguide';
+import {TourGuideZone, useTourGuideController} from 'rn-tourguide';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home: React.FC = () => {
@@ -76,20 +71,15 @@ const Home: React.FC = () => {
   const goToProfile = () =>
     navigation.navigate('ProfileScreen', {id: userInfo?.user.id});
 
-  // Use Hooks to control!
-  const {
-    canStart, // a boolean indicate if you can start tour guide
-    start, // a function to start the tourguide
-    stop, // a function  to stopping it
-    eventEmitter, // an object for listening some events
-  } = useTourGuideController();
+  const {canStart, start} = useTourGuideController();
 
   React.useEffect(() => {
     signIntoAccount();
   }, []);
 
   const startGuide = async () => {
-    if (canStart) start && start();
+    let already_launched = await AsyncStorage.getItem('already_launched');
+    if (canStart && !already_launched) start && start();
   };
 
   React.useEffect(() => {
@@ -118,7 +108,7 @@ const Home: React.FC = () => {
     setItemsRecycledDataFromToday([]);
     setItemsToRecycleDataToday([]);
     setFriendsRecyclingData([]);
-    readData(userInfo?.user.id);
+    await readData(userInfo?.user.id);
     setRefreshing(false);
   };
 
@@ -268,165 +258,177 @@ const Home: React.FC = () => {
             subtitle="Planning on recycling more?"
           />
         </TourGuideZone>
-        <View style={styles.contentView}>
-          <TourGuideZone
-            zone={3}
-            text="Here you can see your progress"
-            shape="rectangle"
-            borderRadius={8}>
-            <Surface
-              direction="column"
-              style={{
-                padding: 12,
-              }}>
-              <Row
+        {refreshing ? (
+          <View
+            style={{
+              height: Dimensions.get('window').height,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <ActivityIndicator size="large" color={colors.primary} />
+          </View>
+        ) : (
+          <View style={styles.contentView}>
+            <TourGuideZone
+              zone={3}
+              text="Here you can see your progress"
+              shape="rectangle"
+              borderRadius={8}>
+              <Surface
+                direction="column"
                 style={{
-                  alignItems: 'center',
-                  justifyContent: 'space-around',
+                  padding: 12,
                 }}>
-                <Column style={{alignItems: 'center'}}>
-                  <AnimatedCircularProgress
-                    rotation={0}
-                    size={100}
-                    width={2}
-                    fill={
-                      (bottlesRecycledAmount / bottlesToRecycleAmount) * 100
-                    }
-                    tintColor={colors.primary}
-                    backgroundColor={colors.placeholder}
-                    style={{marginVertical: 12}}>
-                    {fill => (
-                      <Text
-                        style={[
-                          styles.recycledBottlesAmount,
-                          {color: fill === 100 ? colors.accent : colors.text},
-                        ]}>
-                        {bottlesRecycledAmount}/{bottlesToRecycleAmount}
-                      </Text>
-                    )}
-                  </AnimatedCircularProgress>
-                  <Text style={styles.recycledBottlesGreeting}>
-                    Bottles recycled
-                  </Text>
-                </Column>
-                <Column style={{alignItems: 'center'}}>
-                  <AnimatedCircularProgress
-                    rotation={0}
-                    size={100}
-                    width={2}
-                    fill={itemsRecycledPercentage}
-                    tintColor={colors.primary}
-                    backgroundColor={colors.placeholder}
-                    style={{marginVertical: 12}}>
-                    {fill => (
-                      <Text
-                        style={[
-                          styles.recycledBottlesAmount,
-                          {color: fill === 100 ? colors.accent : colors.text},
-                        ]}>
-                        {itemsRecycledPercentage}%
-                      </Text>
-                    )}
-                  </AnimatedCircularProgress>
-                  <Text style={styles.recycledBottlesGreeting}>
-                    Items recycled
-                  </Text>
-                </Column>
-              </Row>
-            </Surface>
-          </TourGuideZone>
-          <TourGuideZone
-            zone={4}
-            text="Here you can see your recycling history"
-            borderRadius={8}>
-            <Surface
-              direction="column"
-              style={{
-                marginVertical: 12,
-              }}>
-              <Top textStyle={{margin: 4, marginVertical: 2, fontSize: 18}}>
-                Recycling History
-              </Top>
-              <BarChart
-                data={{
-                  labels: itemsRecycledDataFromToday
-                    .slice(
-                      itemsRecycledDataFromToday.length - 3,
-                      itemsRecycledDataFromToday.length,
-                    )
-                    .map(
-                      item =>
-                        new Date(item.created_at).getDate() +
-                        '/' +
-                        (new Date(item.created_at).getMonth() + 1),
-                    ),
-                  datasets: [
-                    {
-                      data: itemsRecycledDataFromToday
-                        .slice(
-                          itemsRecycledDataFromToday.length - 3,
-                          itemsRecycledDataFromToday.length,
-                        )
-                        .map(item => item.bottles),
-                    },
-                  ],
-                }}
-                yLabelsOffset={32}
-                yAxisLabel=""
-                yAxisSuffix=""
-                fromZero
-                width={Dimensions.get('window').width - 48}
-                height={200}
-                chartConfig={{
-                  backgroundGradientFrom: colors.surface,
-                  backgroundGradientFromOpacity: 0,
-                  backgroundGradientTo: colors.primary,
-                  backgroundGradientToOpacity: 0,
-                  decimalPlaces: 0,
-                  color: opacity =>
-                    colors.primary + convertOpacityToHex(opacity),
-                  barPercentage: 0.5,
-                  useShadowColorFromDataset: false, // optional
-                }}
+                <Row
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                  }}>
+                  <Column style={{alignItems: 'center'}}>
+                    <AnimatedCircularProgress
+                      rotation={0}
+                      size={100}
+                      width={2}
+                      fill={
+                        (bottlesRecycledAmount / bottlesToRecycleAmount) * 100
+                      }
+                      tintColor={colors.primary}
+                      backgroundColor={colors.placeholder}
+                      style={{marginVertical: 12}}>
+                      {fill => (
+                        <Text
+                          style={[
+                            styles.recycledBottlesAmount,
+                            {color: fill === 100 ? colors.accent : colors.text},
+                          ]}>
+                          {bottlesRecycledAmount}/{bottlesToRecycleAmount}
+                        </Text>
+                      )}
+                    </AnimatedCircularProgress>
+                    <Text style={styles.recycledBottlesGreeting}>
+                      Bottles recycled
+                    </Text>
+                  </Column>
+                  <Column style={{alignItems: 'center'}}>
+                    <AnimatedCircularProgress
+                      rotation={0}
+                      size={100}
+                      width={2}
+                      fill={itemsRecycledPercentage}
+                      tintColor={colors.primary}
+                      backgroundColor={colors.placeholder}
+                      style={{marginVertical: 12}}>
+                      {fill => (
+                        <Text
+                          style={[
+                            styles.recycledBottlesAmount,
+                            {color: fill === 100 ? colors.accent : colors.text},
+                          ]}>
+                          {itemsRecycledPercentage}%
+                        </Text>
+                      )}
+                    </AnimatedCircularProgress>
+                    <Text style={styles.recycledBottlesGreeting}>
+                      Items recycled
+                    </Text>
+                  </Column>
+                </Row>
+              </Surface>
+            </TourGuideZone>
+            <TourGuideZone
+              zone={4}
+              text="Here you can see your recycling history"
+              borderRadius={8}>
+              <Surface
+                direction="column"
                 style={{
-                  marginVertical: 8,
-                  alignSelf: 'center',
-                  borderRadius: 8,
-                }}
-              />
-            </Surface>
-          </TourGuideZone>
-          <TourGuideZone
-            zone={5}
-            text="And here you can compare yourself to friends!"
-            shape="rectangle"
-            borderRadius={8}>
-            <Card onPress={openModal} outerStyle={{marginBottom: 12}}>
-              <Top
-                style={{margin: 4, marginVertical: 2}}
-                textStyle={{fontSize: 18}}>
-                You vs Your Peers
-              </Top>
-              <View style={{margin: 8}}>
-                <PeerProgress
-                  nickname={userInfo?.user.name}
-                  profile_picture={userInfo?.user.photo}
-                  progressValue={itemsRecycledPercentage / 100}
-                  outerStyle={{marginBottom: 6}}
-                  isUser
+                  marginVertical: 12,
+                }}>
+                <Top textStyle={{margin: 4, marginVertical: 2, fontSize: 18}}>
+                  Recycling History
+                </Top>
+                <BarChart
+                  data={{
+                    labels: itemsRecycledDataFromToday
+                      .slice(
+                        itemsRecycledDataFromToday.length - 4,
+                        itemsRecycledDataFromToday.length,
+                      )
+                      .map(
+                        item =>
+                          new Date(item.created_at).getDate() +
+                          '/' +
+                          (new Date(item.created_at).getMonth() + 1),
+                      ),
+                    datasets: [
+                      {
+                        data: itemsRecycledDataFromToday
+                          .slice(
+                            itemsRecycledDataFromToday.length - 4,
+                            itemsRecycledDataFromToday.length,
+                          )
+                          .map(item => item.bottles),
+                      },
+                    ],
+                  }}
+                  showValuesOnTopOfBars
+                  yLabelsOffset={32}
+                  yAxisLabel=""
+                  yAxisSuffix=""
+                  fromZero
+                  width={Dimensions.get('window').width - 48}
+                  height={200}
+                  chartConfig={{
+                    backgroundGradientFrom: colors.surface,
+                    backgroundGradientFromOpacity: 0,
+                    backgroundGradientTo: colors.primary,
+                    backgroundGradientToOpacity: 0,
+                    decimalPlaces: 0,
+                    color: opacity =>
+                      colors.primary + convertOpacityToHex(opacity),
+                    barPercentage: 0.5,
+                    useShadowColorFromDataset: false, // optional
+                  }}
+                  style={{
+                    marginVertical: 8,
+                    alignSelf: 'center',
+                    borderRadius: 8,
+                  }}
                 />
-                {friendsRecyclingData.slice(0, 2).map(item => (
+              </Surface>
+            </TourGuideZone>
+            <TourGuideZone
+              zone={5}
+              text="And here you can compare yourself to friends!"
+              shape="rectangle"
+              borderRadius={8}>
+              <Card onPress={openModal} outerStyle={{marginBottom: 12}}>
+                <Top
+                  style={{margin: 4, marginVertical: 2}}
+                  textStyle={{fontSize: 18}}>
+                  You vs Your Peers
+                </Top>
+                <View style={{margin: 8}}>
                   <PeerProgress
-                    nickname={item.name}
-                    profile_picture={item.photo}
-                    progressValue={item.percentage}
+                    nickname={userInfo?.user.name}
+                    profile_picture={userInfo?.user.photo}
+                    progressValue={itemsRecycledPercentage / 100}
                     outerStyle={{marginBottom: 6}}
+                    isUser
                   />
-                ))}
-              </View>
-            </Card>
-          </TourGuideZone>
-        </View>
+                  {friendsRecyclingData.slice(0, 2).map(item => (
+                    <PeerProgress
+                      nickname={item.name}
+                      profile_picture={item.photo}
+                      progressValue={item.percentage}
+                      outerStyle={{marginBottom: 6}}
+                    />
+                  ))}
+                </View>
+              </Card>
+            </TourGuideZone>
+          </View>
+        )}
       </ScrollView>
       <BottomSheet
         ref={bottomSheetRef}

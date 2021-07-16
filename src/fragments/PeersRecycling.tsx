@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {SafeAreaView, StyleSheet, View, Text} from 'react-native';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {Top, PeerProgress, RippleButton} from '../components';
 import {AuthContext} from '../utils/Auth';
@@ -24,7 +24,8 @@ const PeersRecycling: React.FC<PeersRecyclingProps> = props => {
       <View style={styles.peersView}>
         <RippleButton
           onPress={() => navigateToProfile(userInfo?.user.id)}
-          outerStyle={{marginBottom: 10}}>
+          outerStyle={{marginBottom: 10}}
+          borderRadius={16}>
           <PeerProgress
             nickname={userInfo?.user.name}
             profile_picture={userInfo?.user.photo}
@@ -35,7 +36,8 @@ const PeersRecycling: React.FC<PeersRecyclingProps> = props => {
         {props.friendsData.map(item => (
           <RippleButton
             onPress={() => navigateToProfile(item.id)}
-            outerStyle={{marginBottom: 10}}>
+            outerStyle={{marginBottom: 10}}
+            borderRadius={16}>
             <PeerProgress
               nickname={item.name}
               profile_picture={item.photo}

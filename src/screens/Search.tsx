@@ -11,6 +11,7 @@ import {AuthContext} from '../utils/Auth';
 const Search: React.FC = () => {
   const [users, setUsers] = React.useState<UserData[]>([]);
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
   const {colors} = useTheme();
   const navigation = useNavigation();
@@ -22,12 +23,14 @@ const Search: React.FC = () => {
   const addFriend = async (friend: UserData) => {
     try {
       if (userInfo?.user.id) {
+        setLoading(true);
         const friends = firebase
           .database()
           .ref('users')
           .child(userInfo?.user.id)
           .child('friends');
         await friends.child(friend.id).set({friend_id: friend.id});
+        setLoading(false);
       }
     } catch (error) {
       console.error(error);
@@ -67,7 +70,13 @@ const Search: React.FC = () => {
             numberOfLines={1}
             style={styles.textInput}
           />
-          <IconButton icon="close" size={14} onPress={clearQuery} borderless />
+          <IconButton
+            icon="close"
+            size={14}
+            onPress={clearQuery}
+            disabled={loading}
+            borderless
+          />
         </View>
       }
     />

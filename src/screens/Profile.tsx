@@ -13,8 +13,6 @@ import {useTheme} from 'react-native-paper';
 import {Header, IconButton, Surface, Row, Column, Top} from '../components';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {BarChart} from 'react-native-chart-kit';
-import PeersRecycling from '../fragments/PeersRecycling';
-import RecyclingHistory from '../fragments/RecyclingHistory';
 import {convertOpacityToHex} from '../utils/usefulFunctions';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
@@ -29,10 +27,6 @@ const Profile: React.FC<
   const [userData, setUserData] = React.useState<UserData | null>(null);
   const [itemsRecycledDataFromToday, setItemsRecycledDataFromToday] =
     React.useState<RecyclingDataType[]>([]);
-  const [itemsToRecycleDataToday, setItemsToRecycleDataToday] = React.useState<
-    RecyclingDataType[]
-  >([]);
-
   const [bottlesToRecycleAmount, setBottlesToRecycleAmount] = React.useState(0);
   const [bottlesRecycledAmount, setBottlesRecycledAmount] = React.useState(0);
   const [itemsRecycledPercentage, setItemsRecycledPercentage] =
@@ -177,7 +171,10 @@ const Profile: React.FC<
         <BarChart
           data={{
             labels: itemsRecycledDataFromToday
-              .slice(0, 3)
+              .slice(
+                itemsRecycledDataFromToday.length - 4,
+                itemsRecycledDataFromToday.length,
+              )
               .map(
                 item =>
                   new Date(item.created_at).getDate() +
@@ -187,11 +184,15 @@ const Profile: React.FC<
             datasets: [
               {
                 data: itemsRecycledDataFromToday
-                  .slice(0, 3)
+                  .slice(
+                    itemsRecycledDataFromToday.length - 4,
+                    itemsRecycledDataFromToday.length,
+                  )
                   .map(item => item.bottles),
               },
             ],
           }}
+          showValuesOnTopOfBars
           yLabelsOffset={32}
           yAxisLabel=""
           yAxisSuffix=""

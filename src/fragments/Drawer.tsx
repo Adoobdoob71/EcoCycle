@@ -3,17 +3,9 @@ import {
   DrawerContentOptions,
 } from '@react-navigation/drawer';
 import React from 'react';
-import {
-  SafeAreaView,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Linking,
-} from 'react-native';
+import {SafeAreaView, Image, StyleSheet, Text, Linking} from 'react-native';
 import {useTheme} from 'react-native-paper';
-import {DrawerItem, IconButton, Row} from '../components';
+import {Column, DrawerItem, IconButton, Row} from '../components';
 import {PreferencesContext} from '../utils/Theme';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
@@ -30,10 +22,6 @@ const DrawerFragment: React.FC<
 
   const navigation = useNavigation();
   const navigateToSettings = () => navigation.navigate('Settings');
-
-  const openGithub = () =>
-    Linking.openURL('https://github.com/Adoobdoob71/EcoCycle');
-
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView
@@ -44,18 +32,20 @@ const DrawerFragment: React.FC<
         overScrollMode="never">
         <Row
           style={{
-            marginVertical: 12,
-            padding: 12,
+            alignItems: 'center',
+            paddingHorizontal: 12,
+            paddingVertical: 21,
           }}>
-          <TouchableOpacity onPress={openGithub}>
-            <Image
-              source={{
-                uri: 'https://i.pinimg.com/originals/08/87/33/088733465f7c684a6cdd242eb463b5bf.jpg',
-              }}
-              style={styles.appIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.appName}>EcoCycle</Text>
+          <Image
+            source={{
+              uri: userInfo?.user.photo,
+            }}
+            style={styles.photo}
+          />
+          <Column style={{flex: 1, marginHorizontal: 10}}>
+            <Text style={styles.name}>{userInfo?.user.name}</Text>
+            <Text style={styles.email}>{userInfo?.user.email}</Text>
+          </Column>
         </Row>
         <DrawerItem
           text="Home"
@@ -109,18 +99,19 @@ const DrawerFragment: React.FC<
 
 function classes(colors: any) {
   return StyleSheet.create({
-    appIcon: {
-      borderRadius: 8,
+    photo: {
+      borderRadius: 25,
       width: 50,
       height: 50,
-      borderWidth: 1,
-      borderColor: colors.text,
     },
-    appName: {
-      fontSize: 32,
+    name: {
+      fontSize: 18,
       color: colors.text,
       fontWeight: 'bold',
-      marginHorizontal: 16,
+    },
+    email: {
+      fontSize: 16,
+      color: colors.placeholder,
     },
   });
 }

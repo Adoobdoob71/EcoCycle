@@ -1,7 +1,7 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StyleSheet, Platform} from 'react-native';
+import {SafeAreaView, Text, StyleSheet, Platform} from 'react-native';
 import {useTheme} from 'react-native-paper';
-import NfcManager, {NfcEvents, OnNfcEvents} from 'react-native-nfc-manager';
+import NfcManager, {NfcEvents} from 'react-native-nfc-manager';
 import firebase from 'firebase/app';
 import {AuthContext} from '../utils/Auth';
 import {useNavigation} from '@react-navigation/native';
@@ -53,9 +53,10 @@ const NFCScanner: React.FC = () => {
 
   const recordData = async () => {
     try {
+      const bottlesNumber = Math.round(Math.random() * 10);
       const data: RecyclingDataType = {
-        all_items: 12,
-        bottles: 4,
+        all_items: 8 + bottlesNumber,
+        bottles: bottlesNumber,
         plastic_items: 5,
         metallic_items: 0,
         paper_items: 3,

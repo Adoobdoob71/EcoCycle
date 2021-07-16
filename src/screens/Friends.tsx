@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-  RefreshControl,
-} from 'react-native';
+import {SafeAreaView, StyleSheet, RefreshControl} from 'react-native';
 import {useTheme} from 'react-native-paper';
-import {FlatList, ScrollView} from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
 import {Header, IconButton, Friend} from '../components';
 import {useNavigation} from '@react-navigation/native';
 import {UserData} from '../utils/Types';

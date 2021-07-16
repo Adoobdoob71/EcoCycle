@@ -1,8 +1,6 @@
 import React from 'react';
 import {
-  StyleProp,
   View,
-  ViewStyle,
   StyleSheet,
   Platform,
   TouchableNativeFeedback,

@@ -34,6 +34,7 @@ const Settings: React.FC = () => {
   };
 
   const showGuide = async () => {
+    await AsyncStorage.removeItem('already_launched');
     DevSettings.reload();
   };
 

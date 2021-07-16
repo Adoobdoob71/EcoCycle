@@ -1,9 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {IStep, Labels} from 'rn-tourguide';
-import Button from './Button';
-import RippleButton from './RippleButton';
 import Row from './Row';
 
 export interface TooltipProps {
@@ -46,7 +45,13 @@ export const Tooltip = ({
       </View>
       <Row style={{alignItems: 'center'}}>
         {!isLastStep ? (
-          <TouchableOpacity onPress={handleStop}>
+          <TouchableOpacity
+            onPress={() => {
+              AsyncStorage.setItem(
+                'already_launched',
+                JSON.stringify(true),
+              ).then(handleStop);
+            }}>
             <View style={styles.navButton}>
               <Text style={styles.navButtonText}>{labels?.skip || 'Skip'}</Text>
             </View>
@@ -68,7 +73,13 @@ export const Tooltip = ({
             </View>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={handleStop}>
+          <TouchableOpacity
+            onPress={() => {
+              AsyncStorage.setItem(
+                'already_launched',
+                JSON.stringify(true),
+              ).then(handleStop);
+            }}>
             <View style={styles.navButton}>
               <Text style={styles.navButtonText}>
                 {labels?.finish || 'Finish'}

@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, StyleSheet, Dimensions} from 'react-native';
+import {SafeAreaView, Dimensions} from 'react-native';
 import {Top} from '../components';
 import {BarChart} from 'react-native-chart-kit';
 import {useTheme} from 'react-native-paper';
@@ -19,7 +19,6 @@ const RecyclingHistory: React.FC = () => {
             },
           ],
         }}
-        // withInnerLines={false}
         yLabelsOffset={32}
         yAxisLabel=""
         yAxisSuffix=""

@@ -1,5 +1,4 @@
 import React from 'react';
-import {StyleProp, ViewStyle} from 'react-native';
 import {StyleSheet, View, Text} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {StyleProperty} from '../utils/Types';
@@ -52,7 +51,7 @@ function classes(colors: any) {
       alignItems: 'center',
       paddingHorizontal: 10,
       paddingVertical: 8,
-      backgroundColor: colors.surface
+      backgroundColor: colors.surface,
     },
     centerView: {
       flex: 1,

@@ -7,8 +7,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
-import {Header, IconButton} from '../components';
-import {ScrollView} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/core';
 import {
   GoogleSignin,
@@ -23,7 +21,7 @@ import firebase from 'firebase/app';
 const SignIn: React.FC = () => {
   const [isSigninInProgress, setIsSigninInProgress] = React.useState(true);
 
-  const {updateUserInfo, userInfo} = React.useContext(AuthContext);
+  const {updateUserInfo} = React.useContext(AuthContext);
   const {isThemeDark} = React.useContext(PreferencesContext);
 
   const {colors} = useTheme();
@@ -37,12 +35,13 @@ const SignIn: React.FC = () => {
     signInSilently();
   });
 
-  const signInSilently = () => {
-    GoogleSignin.signInSilently()
-      .then(() => {
-        navigation.navigate('StackNavigator');
-      })
-      .catch(error => setIsSigninInProgress(false));
+  const signInSilently = async () => {
+    try {
+      await GoogleSignin.signInSilently();
+      navigation.navigate('StackNavigator');
+    } catch (errror) {
+      setIsSigninInProgress(false);
+    }
   };
 
   const signIntoAccount = async () => {

@@ -6,8 +6,6 @@ import Friends from '../screens/Friends';
 import DrawerFragment from '../fragments/Drawer';
 import Settings from '../screens/Settings';
 import About from '../screens/About';
-import {StackScreenProps} from '@react-navigation/stack';
-import {NavigationProp, ParamListBase} from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 

@@ -15,7 +15,7 @@ const ProgressBar: React.FC<ProgressBarProps> = props => {
   const progressAnim = React.useRef(new Animated.Value(0)).current;
 
   const {colors} = useTheme();
-  const styles = classes(colors, props);
+  const styles = classes(colors);
 
   const progressIn = () => {
     Animated.timing(progressAnim, {
@@ -45,10 +45,7 @@ const ProgressBar: React.FC<ProgressBarProps> = props => {
   );
 };
 
-function classes(
-  colors: any,
-  props: React.PropsWithChildren<ProgressBarProps>,
-) {
+function classes(colors: any) {
   return StyleSheet.create({
     progressBarBackground: {
       flexDirection: 'row',

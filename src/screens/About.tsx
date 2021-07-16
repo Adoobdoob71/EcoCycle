@@ -8,7 +8,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
 import {useTheme} from 'react-native-paper';
 import {Header, IconButton, RippleButton} from '../components';
 

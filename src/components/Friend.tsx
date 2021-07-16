@@ -1,9 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {Text, StyleSheet, Image} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {StyleProperty} from '../utils/Types';
 import {RippleButton, Column, Row} from './';
-import {User} from '@react-native-google-signin/google-signin';
 
 interface FriendProps {
   name?: string;

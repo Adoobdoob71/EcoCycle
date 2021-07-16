@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, StyleProp, ViewStyle} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useTheme} from 'react-native-paper';
 import {StyleProperty} from '../utils/Types';
@@ -16,7 +16,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = props => {
   const {colors} = useTheme();
-  const styles = classes(colors, props);
+  const styles = classes(colors);
   return (
     <TouchableOpacity onPress={props.onPress} style={props.style}>
       <View style={props.innerStyle}>
@@ -26,7 +26,7 @@ const Button: React.FC<ButtonProps> = props => {
   );
 };
 
-function classes(colors: any, props: React.PropsWithChildren<ButtonProps>) {
+function classes(colors: any) {
   return StyleSheet.create({
     background: {
       backgroundColor: colors.primary,

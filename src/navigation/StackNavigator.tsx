@@ -3,11 +3,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import DrawerNavigator from './DrawerNavigator';
 import ScanQR from '../screens/ScanQR';
 import Profile from '../screens/Profile';
-import SignIn from '../screens/SignIn';
 import Search from '../screens/Search';
 import {useNavigation} from '@react-navigation/native';
-import firebase from 'firebase/app';
-import {AuthContext} from '../utils/Auth';
 
 const Stack = createStackNavigator();
 
