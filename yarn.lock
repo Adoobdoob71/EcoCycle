@@ -1993,14 +1993,14 @@ anymatch@^3.0.3:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-appcenter-analytics@^4.2.0:
+appcenter-analytics@4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/appcenter-analytics/-/appcenter-analytics-4.2.0.tgz#2d30dbbfd3cf77f6427962c25e00c281e143ac93"
   integrity sha512-bUOXtoqFuiXm4ngXJHlhvGt72/HX6hV0VTRekzy7VrA6kA28LRrp78wqJE2G0Vl175USmuCLdka5jkAbHsbpAA==
   dependencies:
     appcenter "4.2.0"
 
-appcenter-crashes@^4.2.0:
+appcenter-crashes@4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/appcenter-crashes/-/appcenter-crashes-4.2.0.tgz#2ce288787e48f40c049c34ff003fb5ca1a28d255"
   integrity sha512-fcAud3b7nqRvO8KZb9BbRj9ejLeIEvxnM9yxio9MTZ9Un5BrvI4r0ywLh7R6UzwHs8E7bOX4nijug24rq5ixEA==
@@ -2020,7 +2020,7 @@ appcenter-link-scripts@4.2.0:
     which "1.2.11"
     xcode "2.0.0"
 
-appcenter@4.2.0, appcenter@^4.2.0:
+appcenter@4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/appcenter/-/appcenter-4.2.0.tgz#be1436d475a44fd10943f4142cca3ef7c632aea7"
   integrity sha512-6zChX+RLrMXAJumaSZ2OYLpSrJU6OIPGGJMWNhXO/FgvqxE9mZqAH3cHsOJBz7Wz8YzIcf1n75PIHMfnz3euQA==
