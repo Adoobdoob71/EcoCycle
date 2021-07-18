@@ -45,7 +45,7 @@ const ProgressBar: React.FC<ProgressBarProps> = props => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     progressBarBackground: {
       flexDirection: 'row',

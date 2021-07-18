@@ -98,7 +98,7 @@ const NFCScanner: React.FC = () => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({});
 }
 export default NFCScanner;

@@ -50,7 +50,7 @@ export default function App() {
     [toggleTheme, isThemeDark],
   );
 
-  if (Appearance.getColorScheme() === 'dark') toggleTheme();
+  // if (Appearance.getColorScheme() === 'dark') toggleTheme();
 
   const updateUserInfo = React.useCallback((newUserInfo: User | null) => {
     return setUserInfo(newUserInfo);

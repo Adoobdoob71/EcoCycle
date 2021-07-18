@@ -50,7 +50,7 @@ const PeersRecycling: React.FC<PeersRecyclingProps> = props => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     background: {
       flex: 1,

@@ -44,7 +44,7 @@ const Header: React.FC<HeaderProps> = props => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     headerBackground: {
       flexDirection: 'row',

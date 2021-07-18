@@ -42,7 +42,7 @@ const Card: React.FC<CardProps> = props => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     backgroundStyle: {
       backgroundColor: colors.surface,

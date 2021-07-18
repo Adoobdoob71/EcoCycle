@@ -35,7 +35,10 @@ const DrawerItem: React.FC<DrawerItemProps> = props => {
   );
 };
 
-function classes(colors: any, props: React.PropsWithChildren<DrawerItemProps>) {
+function classes(
+  colors: ReactNativePaper.ThemeColors,
+  props: React.PropsWithChildren<DrawerItemProps>,
+) {
   return StyleSheet.create({
     background: {
       paddingHorizontal: 12,

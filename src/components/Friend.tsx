@@ -35,7 +35,7 @@ const Friend: React.FC<FriendProps> = props => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     background: {
       flexDirection: 'row',

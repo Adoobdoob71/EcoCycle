@@ -73,7 +73,10 @@ const IconButton: React.FC<IconButtonProps> = props => {
   );
 };
 
-function classes(colors: any, props: React.PropsWithChildren<IconButtonProps>) {
+function classes(
+  colors: ReactNativePaper.ThemeColors,
+  props: React.PropsWithChildren<IconButtonProps>,
+) {
   return StyleSheet.create({
     background: {
       backgroundColor: props.borderless ? 'transparent' : colors.surface,

@@ -117,7 +117,7 @@ const SignIn: React.FC = () => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     background: {
       flex: 1,

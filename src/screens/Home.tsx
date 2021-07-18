@@ -71,6 +71,8 @@ const Home: React.FC = () => {
   const goToProfile = () =>
     navigation.navigate('ProfileScreen', {id: userInfo?.user.id});
 
+  const goToScans = () => navigation.navigate('ScansScreen');
+
   const {canStart, start} = useTourGuideController();
 
   React.useEffect(() => {
@@ -274,9 +276,9 @@ const Home: React.FC = () => {
               text="Here you can see your progress"
               shape="rectangle"
               borderRadius={8}>
-              <Surface
-                direction="column"
-                style={{
+              <Card
+                onPress={goToScans}
+                innerStyle={{
                   padding: 12,
                 }}>
                 <Row
@@ -333,7 +335,7 @@ const Home: React.FC = () => {
                     </Text>
                   </Column>
                 </Row>
-              </Surface>
+              </Card>
             </TourGuideZone>
             <TourGuideZone
               zone={4}
@@ -450,7 +452,7 @@ const Home: React.FC = () => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     mainView: {
       flex: 1,

@@ -25,7 +25,7 @@ const Top: React.FC<TopProps> = props => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     topView: {
       flex: 1,

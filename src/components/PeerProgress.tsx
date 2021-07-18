@@ -36,7 +36,7 @@ const PeerProgress: React.FC<PeerProgressProps> = props => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     peerProgressBackground: {
       flexDirection: 'row',

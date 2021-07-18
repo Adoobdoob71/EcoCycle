@@ -26,7 +26,7 @@ const Button: React.FC<ButtonProps> = props => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     background: {
       backgroundColor: colors.primary,

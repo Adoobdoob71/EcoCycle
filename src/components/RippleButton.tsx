@@ -50,7 +50,7 @@ const RippleButton: React.FC<RippleButtonProps> = props => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     background: {},
   });

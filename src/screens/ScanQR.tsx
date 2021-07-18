@@ -30,7 +30,7 @@ const ScanQR: React.FC = () => {
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     background: {
       backgroundColor: colors.background,

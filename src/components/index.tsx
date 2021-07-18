@@ -17,3 +17,4 @@ export {default as ProgressBar} from './ProgressBar';
 export {default as PeerProgress} from './PeerProgress';
 export {default as Friend} from './Friend';
 export {default as User} from './User';
+export {default as ScanItem} from './ScanItem';

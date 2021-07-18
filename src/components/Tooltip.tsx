@@ -92,7 +92,7 @@ export const Tooltip = ({
   );
 };
 
-function classes(colors: any) {
+function classes(colors: ReactNativePaper.ThemeColors) {
   return StyleSheet.create({
     tooltipBackground: {
       backgroundColor: colors.surface,
