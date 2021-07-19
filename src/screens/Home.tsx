@@ -125,12 +125,18 @@ const Home: React.FC = () => {
           .get();
         let recyclingData = data.val() as UserRecyclingData;
         setBottlesRecycledAmount(recyclingData.bottlesRecycledAmount);
-        setBottlesToRecycleAmount(recyclingData.bottlesToRecycleAmount);
+        if (
+          recyclingData.bottlesRecycledAmount >=
+          recyclingData.bottlesToRecycleAmount
+        )
+          setBottlesToRecycleAmount(recyclingData.bottlesRecycledAmount);
+
         let percentage = Math.round(
           (recyclingData.itemsRecycledAmount /
             recyclingData.itemsToRecycleAmount) *
             100,
         );
+        if (isNaN(percentage)) setItemsRecycledPercentage(0);
         if (percentage > 100) percentage = 100;
         setItemsRecycledPercentage(percentage);
 
