@@ -49,11 +49,13 @@ const Profile: React.FC<
         .child('recycling_brief')
         .get();
       let recyclingData = data.val() as UserRecyclingData;
+      setBottlesRecycledAmount(recyclingData.bottlesRecycledAmount);
       if (
         recyclingData.bottlesRecycledAmount >=
         recyclingData.bottlesToRecycleAmount
-      )
+      ) {
         setBottlesToRecycleAmount(recyclingData.bottlesRecycledAmount);
+      } else setBottlesToRecycleAmount(recyclingData.bottlesToRecycleAmount);
 
       let percentage = Math.round(
         (recyclingData.itemsRecycledAmount /

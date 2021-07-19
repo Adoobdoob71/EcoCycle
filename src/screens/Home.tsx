@@ -130,7 +130,7 @@ const Home: React.FC = () => {
           recyclingData.bottlesToRecycleAmount
         )
           setBottlesToRecycleAmount(recyclingData.bottlesRecycledAmount);
-
+        else setBottlesToRecycleAmount(recyclingData.bottlesToRecycleAmount);
         let percentage = Math.round(
           (recyclingData.itemsRecycledAmount /
             recyclingData.itemsToRecycleAmount) *
