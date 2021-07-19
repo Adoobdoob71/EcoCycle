@@ -2,12 +2,10 @@ import React from 'react';
 import {View, Text, StyleSheet, ViewStyle} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {RecyclingDataType, StyleProperty} from '../utils/Types';
-import {Row, Card} from './';
-
+import {Row, Card, Surface} from './';
+import {Menu} from 'react-native-paper';
 interface ScanItemProps extends RecyclingDataType {
-  onRemovePress?: () => void;
   outerStyle?: StyleProperty;
-  alreadyRecycled?: boolean;
 }
 
 const ScanItem: React.FC<ScanItemProps> = props => {
@@ -15,65 +13,67 @@ const ScanItem: React.FC<ScanItemProps> = props => {
   const styles = classes(colors);
 
   return (
-    <Card outerStyle={props.outerStyle} onPress={() => {}}>
+    <View
+      style={[
+        props.outerStyle,
+        {
+          flexDirection: 'row',
+          borderWidth: 1,
+          borderColor: colors.primary,
+          padding: 0,
+          backgroundColor: colors.surface,
+          borderRadius: 12,
+        },
+      ]}>
+      <Stat
+        title="All"
+        detail={`${props.all_items}`}
+        colors={colors}
+        styles={styles}
+      />
       <View
         style={{
-          flexDirection: 'row',
-          borderWidth: 2,
-          borderColor: props.alreadyRecycled ? colors.primary : colors.accent,
-          padding: 0,
-          borderRadius: 12,
-        }}>
-        <Stat
-          title="All"
-          detail={`${props.all_items}`}
-          colors={colors}
-          styles={styles}
-        />
-        <View
-          style={{
-            height: '80%',
-            width: 1,
-            borderRadius: 8,
-            backgroundColor: colors.text,
-            alignSelf: 'center',
-          }}></View>
-        <Stat
-          title="Bottles"
-          detail={`${props.bottles}`}
-          colors={colors}
-          styles={styles}
-        />
-        <View
-          style={{
-            height: '80%',
-            width: 1,
-            borderRadius: 8,
-            backgroundColor: colors.text,
-            alignSelf: 'center',
-          }}></View>
-        <Stat
-          title="Paper"
-          detail={`${props.paper_items}`}
-          colors={colors}
-          styles={styles}
-        />
-        <View
-          style={{
-            height: '80%',
-            width: 1,
-            borderRadius: 8,
-            backgroundColor: colors.text,
-            alignSelf: 'center',
-          }}></View>
-        <Stat
-          title="Metallic"
-          detail={`${props.paper_items}`}
-          colors={colors}
-          styles={styles}
-        />
-      </View>
-    </Card>
+          height: '80%',
+          width: 1,
+          borderRadius: 8,
+          backgroundColor: colors.text,
+          alignSelf: 'center',
+        }}></View>
+      <Stat
+        title="Bottles"
+        detail={`${props.bottles}`}
+        colors={colors}
+        styles={styles}
+      />
+      <View
+        style={{
+          height: '80%',
+          width: 1,
+          borderRadius: 8,
+          backgroundColor: colors.text,
+          alignSelf: 'center',
+        }}></View>
+      <Stat
+        title="Paper"
+        detail={`${props.paper_items}`}
+        colors={colors}
+        styles={styles}
+      />
+      <View
+        style={{
+          height: '80%',
+          width: 1,
+          borderRadius: 8,
+          backgroundColor: colors.text,
+          alignSelf: 'center',
+        }}></View>
+      <Stat
+        title="Metallic"
+        detail={`${props.paper_items}`}
+        colors={colors}
+        styles={styles}
+      />
+    </View>
   );
 };
 

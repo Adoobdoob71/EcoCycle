@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import {Appearance, StatusBar} from 'react-native';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {StatusBar} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {
   DarkAppTheme,
@@ -9,11 +9,7 @@ import {
   PreferencesContext,
 } from './src/utils/Theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  User,
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+import {User} from '@react-native-google-signin/google-signin';
 import {AuthContext} from './src/utils/Auth';
 import AuthNavigator from './src/navigation/AuthNavigator';
 import {TourGuideProvider} from 'rn-tourguide';
@@ -24,7 +20,6 @@ export default function App() {
   const [userInfo, setUserInfo] = React.useState<User | null>(null);
 
   let theme = isThemeDark ? DarkAppTheme : LightAppTheme;
-  // const navigation = useNavigation();
 
   React.useEffect(() => {
     loadTheme().then(result => {
@@ -49,8 +44,6 @@ export default function App() {
     }),
     [toggleTheme, isThemeDark],
   );
-
-  // if (Appearance.getColorScheme() === 'dark') toggleTheme();
 
   const updateUserInfo = React.useCallback((newUserInfo: User | null) => {
     return setUserInfo(newUserInfo);

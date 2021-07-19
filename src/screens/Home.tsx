@@ -126,13 +126,14 @@ const Home: React.FC = () => {
         let recyclingData = data.val() as UserRecyclingData;
         setBottlesRecycledAmount(recyclingData.bottlesRecycledAmount);
         setBottlesToRecycleAmount(recyclingData.bottlesToRecycleAmount);
-        setItemsRecycledPercentage(
-          Math.round(
-            (recyclingData.itemsRecycledAmount /
-              recyclingData.itemsToRecycleAmount) *
-              100,
-          ),
+        let percentage = Math.round(
+          (recyclingData.itemsRecycledAmount /
+            recyclingData.itemsToRecycleAmount) *
+            100,
         );
+        if (percentage > 100) percentage = 100;
+        setItemsRecycledPercentage(percentage);
+
         const date = new Date();
         date.setDate(date.getDate() - 1);
         let itemsRecycledDataToday = await firebase
@@ -483,6 +484,8 @@ function classes(colors: ReactNativePaper.ThemeColors) {
       borderTopEndRadius: 12,
       borderTopStartRadius: 12,
       height: 24,
+      borderWidth: 1,
+      borderColor: colors.primary,
       justifyContent: 'center',
       alignItems: 'center',
     },
