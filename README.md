@@ -31,5 +31,13 @@ npx react-native run-android
 
 the app works only on android for now, if you want to contribute to iOS configuration, feel free to do so!
 
+## Demo Data
+
+Here's a demo barcode to scan in the app:
+
+<img src="https://github.com/Adoobdoob71/EcoCycle/blob/master/DEMOBARCODE.PNG" />
+
+To scan NFC, you can simply hold the device against a random NFC tag, it won't actually read anything, it just listens for any signal nearby and generates demo data by itself.  [SEE FUNCTION HERE](https://github.com/Adoobdoob71/EcoCycle/blob/c8d676f0c301563762afbffe182472567e1d06d1/src/fragments/NFCScanner.tsx#L23)
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
