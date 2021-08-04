@@ -6,6 +6,7 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import RecieptScanner from '../fragments/RecieptScanner';
 import {useNavigation} from '@react-navigation/native';
 import NFCScanner from '../fragments/NFCScanner';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -23,8 +24,24 @@ const ScanQR: React.FC = () => {
       <Tab.Navigator
         initialRouteName="Reciepts"
         style={{backgroundColor: colors.surface}}>
-        <Tab.Screen component={RecieptScanner} name="Reciepts" />
-        <Tab.Screen component={NFCScanner} name="NFC" />
+        <Tab.Screen
+          component={RecieptScanner}
+          name="Reciepts"
+          options={{
+            tabBarIcon: ({focused, color}) => (
+              <MaterialCommunityIcons name="barcode" size={16} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          component={NFCScanner}
+          name="NFC"
+          options={{
+            tabBarIcon: ({focused, color}) => (
+              <MaterialCommunityIcons name="nfc" size={16} color={color} />
+            ),
+          }}
+        />
       </Tab.Navigator>
     </>
   );
