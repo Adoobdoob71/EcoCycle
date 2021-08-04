@@ -1054,6 +1054,15 @@
     nanoid "^3.1.20"
     react-native-redash "^14.2.4"
 
+"@gorhom/paper-onboarding@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@gorhom/paper-onboarding/-/paper-onboarding-1.2.0.tgz#6241c55301ae8006306e54bb8b401de398e47ff4"
+  integrity sha512-GGHkUsg9Ijjruvyqm5Ce3tboUfZ6BdeybJJO2gg3o5B2p7fbevDiDK/vlwxiyVrWlW4u1BKFjNGJdzcuhlLfeQ==
+  dependencies:
+    lodash.isequal "^4.5.0"
+    react-native-redash "^14.2.4"
+    react-native-svg "^12.1.1"
+
 "@gorhom/portal@^1.0.4":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@gorhom/portal/-/portal-1.0.7.tgz#e27cd40f8e2b6cb742050bcaa00fdcf94f3dfca8"
