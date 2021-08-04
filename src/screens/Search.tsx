@@ -7,11 +7,14 @@ import {Header, IconButton, User} from '../components';
 import {useNavigation} from '@react-navigation/native';
 import firebase from 'firebase/app';
 import {AuthContext} from '../utils/Auth';
+import {Snackbar} from 'react-native-paper';
 
 const Search: React.FC = () => {
   const [users, setUsers] = React.useState<UserData[]>([]);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] =
+    React.useState<string | null>(null);
 
   const {colors} = useTheme();
   const navigation = useNavigation();
@@ -30,6 +33,7 @@ const Search: React.FC = () => {
           .child(userInfo?.user.id)
           .child('friends');
         await friends.child(friend.id).set({friend_id: friend.id});
+
         setLoading(false);
       }
     } catch (error) {
@@ -54,6 +58,13 @@ const Search: React.FC = () => {
       .endAt(value + '\uf8ff')
       .get();
     data.forEach(item => setUsers(users => [...users, item.val()]));
+  };
+
+  const dismissScreen = () => {
+    setSnackbarMessage(null);
+    setTimeout(() => {
+      navigation.goBack();
+    }, 5000);
   };
 
   const listHeaderComponent = () => (
@@ -101,6 +112,9 @@ const Search: React.FC = () => {
         showsVerticalScrollIndicator={false}
         overScrollMode="never"
       />
+      <Snackbar visible={snackbarMessage !== null} onDismiss={dismissScreen}>
+        {snackbarMessage}
+      </Snackbar>
     </SafeAreaView>
   );
 };
