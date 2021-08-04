@@ -25,7 +25,7 @@ const PeersRecycling: React.FC<PeersRecyclingProps> = props => {
         <RippleButton
           onPress={() => navigateToProfile(userInfo?.user.id)}
           outerStyle={{marginBottom: 10}}
-          borderRadius={16}>
+          borderRadius={8}>
           <PeerProgress
             nickname={userInfo?.user.name}
             profile_picture={userInfo?.user.photo}
@@ -37,7 +37,7 @@ const PeersRecycling: React.FC<PeersRecyclingProps> = props => {
           <RippleButton
             onPress={() => navigateToProfile(item.id)}
             outerStyle={{marginBottom: 10}}
-            borderRadius={16}>
+            borderRadius={8}>
             <PeerProgress
               nickname={item.name}
               profile_picture={item.photo}

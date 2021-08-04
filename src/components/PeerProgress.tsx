@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {StyleProperty} from '../utils/Types';
-import {ProgressBar} from './';
+import {ProgressBar, Column} from './';
 
 interface PeerProgressProps {
   nickname?: string | null;
@@ -22,16 +22,18 @@ const PeerProgress: React.FC<PeerProgressProps> = props => {
         source={{uri: props.profile_picture}}
         style={styles.peerProfilePicture}
       />
-      <Text style={styles.peerNickname} numberOfLines={1}>
-        {props.nickname}
-      </Text>
-      <ProgressBar
-        outerStyle={{flex: 4, marginStart: 8}}
-        innerStyle={{
-          backgroundColor: props.isUser ? colors.accent : colors.primary,
-        }}
-        value={props.progressValue}
-      />
+      <Column style={{flex: 1, alignItems: 'center'}}>
+        <Text style={styles.peerNickname} numberOfLines={1}>
+          {props.nickname}
+        </Text>
+        <ProgressBar
+          outerStyle={{alignSelf: 'stretch', marginStart: 8}}
+          innerStyle={{
+            backgroundColor: props.isUser ? colors.accent : colors.primary,
+          }}
+          value={props.progressValue}
+        />
+      </Column>
     </View>
   );
 };
@@ -43,10 +45,10 @@ function classes(colors: ReactNativePaper.ThemeColors) {
       alignItems: 'center',
     },
     peerProfilePicture: {
-      width: 24,
-      height: 24,
-      borderRadius: 12,
-      marginEnd: 8,
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      marginEnd: 10,
     },
     peerNickname: {
       flex: 2,
