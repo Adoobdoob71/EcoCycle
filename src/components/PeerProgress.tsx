@@ -22,12 +22,12 @@ const PeerProgress: React.FC<PeerProgressProps> = props => {
         source={{uri: props.profile_picture}}
         style={styles.peerProfilePicture}
       />
-      <Column style={{flex: 1, alignItems: 'center'}}>
+      <Column style={{flex: 1, justifyContent: 'center'}}>
         <Text style={styles.peerNickname} numberOfLines={1}>
           {props.nickname}
         </Text>
         <ProgressBar
-          outerStyle={{alignSelf: 'stretch', marginStart: 8}}
+          outerStyle={{alignSelf: 'stretch', marginTop: 8}}
           innerStyle={{
             backgroundColor: props.isUser ? colors.accent : colors.primary,
           }}
@@ -43,6 +43,7 @@ function classes(colors: ReactNativePaper.ThemeColors) {
     peerProgressBackground: {
       flexDirection: 'row',
       alignItems: 'center',
+      padding: 4,
     },
     peerProfilePicture: {
       width: 32,
@@ -51,7 +52,6 @@ function classes(colors: ReactNativePaper.ThemeColors) {
       marginEnd: 10,
     },
     peerNickname: {
-      flex: 2,
       color: colors.text,
       fontWeight: 'bold',
     },

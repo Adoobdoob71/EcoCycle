@@ -6,6 +6,7 @@ import Profile from '../screens/Profile';
 import Search from '../screens/Search';
 import {useNavigation} from '@react-navigation/native';
 import Scans from '../screens/Scans';
+import Guide from '../screens/Guide';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,7 @@ const StackNavigator: React.FC = () => {
       <Stack.Screen name="ProfileScreen" component={Profile} />
       <Stack.Screen name="SearchScreen" component={Search} />
       <Stack.Screen name="ScansScreen" component={Scans} />
+      <Stack.Screen name="GuideScreen" component={Guide} />
     </Stack.Navigator>
   );
 };

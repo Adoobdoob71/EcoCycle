@@ -34,9 +34,10 @@ const Settings: React.FC = () => {
     }
   };
 
-  const showGuide = async () => {
+  const openGuide = async () => {
     await AsyncStorage.removeItem('already_launched');
     RNRestart.Restart();
+    // navigation.navigate('GuideScreen');
   };
 
   return (
@@ -77,7 +78,7 @@ const Settings: React.FC = () => {
           title="Guide"
           description="Show guide of the app"
           left={() => <List.Icon icon="information" color={colors.text} />}
-          onPress={showGuide}
+          onPress={openGuide}
         />
       </List.Section>
     </ScrollView>

@@ -37,7 +37,7 @@ const NFCScanner: React.FC = () => {
         NfcManager.unregisterTagEvent().catch(() => 0);
         if (scanned) return;
         await recordData();
-        navigation.navigate('Home', {guide: false});
+        navigation.navigate('Home');
       });
 
       NfcManager.setEventListener(NfcEvents.SessionClosed, () => {
@@ -86,7 +86,6 @@ const NFCScanner: React.FC = () => {
   React.useEffect(() => {
     initNfc().then(async () => {
       const data = await readNdef();
-      console.log(data);
     });
   }, []);
 
