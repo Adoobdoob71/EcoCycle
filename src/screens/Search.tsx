@@ -6,11 +6,13 @@ import {UserData} from '../utils/Types';
 import {Header, IconButton, User} from '../components';
 import {useNavigation} from '@react-navigation/native';
 import firebase from 'firebase/app';
-import {AuthContext} from '../utils/Auth';
 import {Snackbar} from 'react-native-paper';
+import {useAuth} from '../hooks/useAuth';
+import {useSearch} from '../hooks/useSearch';
+import firestore from '@react-native-firebase/firestore';
+import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 const Search: React.FC = () => {
-  const [users, setUsers] = React.useState<UserData[]>([]);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] =
@@ -21,44 +23,33 @@ const Search: React.FC = () => {
 
   const styles = classes(colors);
 
-  const {userInfo} = React.useContext(AuthContext);
+  const {currentUser} = useAuth();
+  const {searchUsers, users} = useSearch();
 
-  const addFriend = async (friend: UserData) => {
+  const addFriend = async (friend: FirebaseAuthTypes.User) => {
     try {
-      if (userInfo?.user.id) {
+      if (currentUser) {
         setLoading(true);
-        const friends = firebase
-          .database()
-          .ref('users')
-          .child(userInfo?.user.id)
-          .child('friends');
-        await friends.child(friend.id).set({friend_id: friend.id});
-
-        setLoading(false);
+        const friends = firestore()
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('friends');
+        await friends.doc(friend.uid).set({friend_uid: friend.uid});
       }
+      setLoading(false);
     } catch (error) {
       console.error(error);
     }
   };
 
   const goBack = () => navigation.goBack();
+
   const onChangeText = (value: string) => {
     setSearchQuery(value);
     searchUsers(value);
   };
-  const clearQuery = () => setSearchQuery('');
 
-  const searchUsers = async (value: string) => {
-    setUsers([]);
-    const data = await firebase
-      .database()
-      .ref('users')
-      .orderByChild('name')
-      .startAt(value)
-      .endAt(value + '\uf8ff')
-      .get();
-    data.forEach(item => setUsers(users => [...users, item.val()]));
-  };
+  const clearQuery = () => setSearchQuery('');
 
   const dismissScreen = () => {
     setSnackbarMessage(null);
@@ -102,7 +93,7 @@ const Search: React.FC = () => {
             {...item}
             onPress={() => addFriend(item)}
             outerStyle={{marginBottom: 8}}
-            disabled={userInfo?.user.id === item.id}
+            disabled={currentUser?.uid === item.id}
           />
         )}
         ListHeaderComponent={listHeaderComponent()}

@@ -11,24 +11,17 @@ import {useNavigation} from '@react-navigation/core';
 import {
   GoogleSignin,
   GoogleSigninButton,
-  statusCodes,
-  User,
 } from '@react-native-google-signin/google-signin';
-import {AuthContext} from '../utils/Auth';
-import {PreferencesContext} from '../utils/Theme';
-import firebase from 'firebase/app';
+import {useAuth} from '../hooks/useAuth';
+import {useCustomTheme} from '../hooks/useCustomTheme';
 
 const SignIn: React.FC = () => {
   const [isSigninInProgress, setIsSigninInProgress] = React.useState(true);
-
-  const {updateUserInfo} = React.useContext(AuthContext);
-  const {isThemeDark} = React.useContext(PreferencesContext);
 
   const {colors} = useTheme();
   const styles = classes(colors);
 
   const navigation = useNavigation();
-  const goBack = () => navigation.goBack();
 
   React.useEffect(() => {
     navigation.addListener('beforeRemove', e => e.preventDefault());
@@ -44,49 +37,8 @@ const SignIn: React.FC = () => {
     }
   };
 
-  const signIntoAccount = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const newUserInfo = await GoogleSignin.signIn();
-      updateUserInfo(newUserInfo);
-      const googleCredential = firebase.auth.GoogleAuthProvider.credential(
-        newUserInfo.idToken,
-      );
-      await firebase.auth().signInWithCredential(googleCredential);
-      await signAccountDataIntoDB(newUserInfo);
-    } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
-      } else {
-        // some other error happened
-      }
-    }
-  };
-
-  const signAccountDataIntoDB = async (newUser: User) => {
-    try {
-      const reference = firebase.database().ref('users');
-      let result = await reference.child(newUser.user.id).get();
-      if (result.exists())
-        await reference.child(newUser.user.id).update(newUser.user);
-      else
-        await reference.child(newUser.user.id).set({
-          ...newUser.user,
-          recycling_brief: {
-            bottlesToRecycleAmount: 0,
-            bottlesRecycledAmount: 0,
-            itemsToRecycleAmount: 0,
-            itemsRecycledAmount: 0,
-          },
-        });
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
+  const {signIntoAccount} = useAuth();
+  const {isThemeDark} = useCustomTheme();
 
   return isSigninInProgress ? (
     <SafeAreaView

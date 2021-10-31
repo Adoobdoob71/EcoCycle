@@ -4,14 +4,11 @@ import {Header, IconButton} from '../components';
 import {ScrollView, Switch} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/core';
 import {List} from 'react-native-paper';
-import {PreferencesContext} from '../utils/Theme';
 import {useTheme} from 'react-native-paper';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {AuthContext} from '../utils/Auth';
-import firebase from 'firebase/app';
-import {DevSettings} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNRestart from 'react-native-restart/src';
+import {useAuth} from '../hooks/useAuth';
+import {useCustomTheme} from '../hooks/useCustomTheme';
 
 const Settings: React.FC = () => {
   const navigation = useNavigation();
@@ -19,25 +16,12 @@ const Settings: React.FC = () => {
 
   const {colors} = useTheme();
 
-  const {toggleTheme, isThemeDark} = React.useContext(PreferencesContext);
-  const {updateUserInfo} = React.useContext(AuthContext);
-
-  const signOut = async () => {
-    try {
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
-      await firebase.auth().signOut();
-      updateUserInfo(null);
-      RNRestart.Restart();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const {signOut} = useAuth();
+  const {toggleTheme, isThemeDark} = useCustomTheme();
 
   const openGuide = async () => {
     await AsyncStorage.removeItem('already_launched');
     RNRestart.Restart();
-    // navigation.navigate('GuideScreen');
   };
 
   return (
@@ -55,7 +39,6 @@ const Settings: React.FC = () => {
         <List.Item
           title="Theme"
           description="Toggle the theme of the app"
-          left={() => <List.Icon icon="palette" color={colors.text} />}
           right={() => (
             <Switch
               value={isThemeDark}
@@ -69,7 +52,6 @@ const Settings: React.FC = () => {
         <List.Item
           title="Sign Out"
           description="Sign out of your account"
-          left={() => <List.Icon icon="close" color={colors.error} />}
           onPress={signOut}
         />
       </List.Section>
@@ -77,7 +59,6 @@ const Settings: React.FC = () => {
         <List.Item
           title="Guide"
           description="Show guide of the app"
-          left={() => <List.Icon icon="information" color={colors.text} />}
           onPress={openGuide}
         />
       </List.Section>

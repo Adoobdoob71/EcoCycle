@@ -210,7 +210,7 @@ const Home: React.FC = () => {
             refreshing={refreshing}
             onRefresh={onRefresh}
             colors={[colors.primary]}
-            progressBackgroundColor={colors.backdrop}
+            progressBackgroundColor={colors.background}
           />
         }
         overScrollMode="never">
@@ -490,13 +490,11 @@ function classes(colors: ReactNativePaper.ThemeColors) {
       borderTopEndRadius: 12,
       borderTopStartRadius: 12,
       height: 24,
-      borderWidth: 1,
-      borderColor: colors.primary,
       justifyContent: 'center',
       alignItems: 'center',
     },
     bottomSheetsHandle: {
-      backgroundColor: colors.placeholder,
+      backgroundColor: colors.disabled,
       width: '10%',
       height: 5,
       borderRadius: 8,

@@ -5,15 +5,15 @@ import {FlatList} from 'react-native-gesture-handler';
 import {Header, IconButton, Friend} from '../components';
 import {useNavigation} from '@react-navigation/native';
 import {UserData} from '../utils/Types';
+import {useAuth} from '../hooks/useAuth';
 import firebase from 'firebase/app';
-import {AuthContext} from '../utils/Auth';
 
 const Friends: React.FC = () => {
   const [friends, setFriends] = React.useState<UserData[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   const {colors} = useTheme();
-  const {userInfo} = React.useContext(AuthContext);
+  const {currentUser} = useAuth();
   const styles = classes(colors);
 
   const navigation = useNavigation<any>();
@@ -22,11 +22,11 @@ const Friends: React.FC = () => {
   const readData = async () => {
     setLoading(true);
     setFriends([]);
-    if (userInfo?.user.id) {
+    if (currentUser) {
       const data = await firebase
         .database()
         .ref('users')
-        .child(userInfo?.user.id)
+        .child(currentUser.uid)
         .child('friends')
         .get();
       data.forEach(item => {

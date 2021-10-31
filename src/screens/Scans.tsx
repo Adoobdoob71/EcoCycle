@@ -7,10 +7,7 @@ import {
   Text,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
-import {Header, IconButton, ScanItem} from '../components';
-import {RecyclingDataType} from '../utils/Types';
-import firebase from 'firebase/app';
-import {AuthContext} from '../utils/Auth';
+import {Header, IconButton} from '../components';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {useNavigation} from '@react-navigation/core';
 import ToRecycleFragment from '../fragments/ToRecycleFragment';
@@ -30,6 +27,11 @@ const Scans: React.FC = () => {
       />
       <Tab.Navigator
         initialRouteName="To Recycle"
+        tabBarOptions={{
+          activeTintColor: colors.primary,
+          inactiveTintColor: colors.disabled,
+          labelStyle: {fontWeight: 'bold'},
+        }}
         style={{backgroundColor: colors.surface}}>
         <Tab.Screen name="To Recycle" component={ToRecycleFragment} />
         <Tab.Screen
