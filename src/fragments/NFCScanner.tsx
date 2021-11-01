@@ -2,10 +2,8 @@ import React from 'react';
 import {SafeAreaView, Text, StyleSheet, Platform} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import NfcManager, {NfcEvents} from 'react-native-nfc-manager';
-import firebase from 'firebase/app';
-import {AuthContext} from '../utils/Auth';
 import {useNavigation} from '@react-navigation/native';
-import {RecyclingDataType} from '../utils/Types';
+import {useAuth} from '../hooks/useAuth';
 
 const NFCScanner: React.FC = () => {
   const {colors} = useTheme();
@@ -13,7 +11,7 @@ const NFCScanner: React.FC = () => {
   const [readyForScans, setReadyForScans] = React.useState(false);
   const [scanned, setScanned] = React.useState(false);
 
-  const {userInfo} = React.useContext(AuthContext);
+  const {currentUser} = useAuth();
   const navigation = useNavigation();
 
   const initNfc = async () => {
@@ -53,31 +51,31 @@ const NFCScanner: React.FC = () => {
 
   const recordData = async () => {
     try {
-      const bottlesNumber = Math.round(Math.random() * 10);
-      const data: RecyclingDataType = {
-        all_items: 8 + bottlesNumber,
-        bottles: bottlesNumber,
-        plastic_items: 5,
-        metallic_items: 0,
-        paper_items: 3,
-        created_at: Date.now(),
-      };
-      await firebase
-        .database()
-        .ref(`users/${userInfo?.user.id}`)
-        .child('recycling')
-        .child('already_recycled')
-        .push()
-        .set(data);
-      const updates: any = {};
-      updates[
-        `users/${userInfo?.user.id}/recycling_brief/bottlesRecycledAmount`
-      ] = firebase.database.ServerValue.increment(data.bottles);
-      updates[
-        `users/${userInfo?.user.id}/recycling_brief/itemsRecycledAmount`
-      ] = firebase.database.ServerValue.increment(data.all_items);
-      await firebase.database().ref().update(updates);
-      setScanned(true);
+      // const bottlesNumber = Math.round(Math.random() * 10);
+      // const data: RecyclingDataType = {
+      //   all_items: 8 + bottlesNumber,
+      //   bottles: bottlesNumber,
+      //   plastic_items: 5,
+      //   metallic_items: 0,
+      //   paper_items: 3,
+      //   created_at: Date.now(),
+      // };
+      // await firebase
+      //   .database()
+      //   .ref(`users/${userInfo?.user.id}`)
+      //   .child('recycling')
+      //   .child('already_recycled')
+      //   .push()
+      //   .set(data);
+      // const updates: any = {};
+      // updates[
+      //   `users/${userInfo?.user.id}/recycling_brief/bottlesRecycledAmount`
+      // ] = firebase.database.ServerValue.increment(data.bottles);
+      // updates[
+      //   `users/${userInfo?.user.id}/recycling_brief/itemsRecycledAmount`
+      // ] = firebase.database.ServerValue.increment(data.all_items);
+      // await firebase.database().ref().update(updates);
+      // setScanned(true);
     } catch (error) {
       console.error(error);
     }

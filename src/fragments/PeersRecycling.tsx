@@ -3,17 +3,22 @@ import React from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {Top, PeerProgress, RippleButton} from '../components';
-import {AuthContext} from '../utils/Auth';
+import {useAuth} from '../hooks/useAuth';
 
 interface PeersRecyclingProps {
-  friendsData: {photo: string; name: string; percentage: number; id: string}[];
+  friendsData: {
+    photoURL: string;
+    displayName: string;
+    percentage: number;
+    uid: string;
+  }[];
   progressValue: number;
 }
 
 const PeersRecycling: React.FC<PeersRecyclingProps> = props => {
   const {colors} = useTheme();
   const styles = classes(colors);
-  const {userInfo} = React.useContext(AuthContext);
+  const {currentUser} = useAuth();
   const navigation = useNavigation();
 
   const navigateToProfile = (id?: string) =>
@@ -23,24 +28,24 @@ const PeersRecycling: React.FC<PeersRecyclingProps> = props => {
       <Top textStyle={{fontSize: 18}}>You vs Your Peers</Top>
       <View style={styles.peersView}>
         <RippleButton
-          onPress={() => navigateToProfile(userInfo?.user.id)}
+          onPress={() => navigateToProfile(currentUser?.uid)}
           outerStyle={{marginBottom: 10}}
           borderRadius={8}>
           <PeerProgress
-            nickname={userInfo?.user.name}
-            profile_picture={userInfo?.user.photo}
+            nickname={currentUser?.displayName}
+            profile_picture={currentUser?.photoURL}
             progressValue={props.progressValue}
             isUser
           />
         </RippleButton>
         {props.friendsData.map(item => (
           <RippleButton
-            onPress={() => navigateToProfile(item.id)}
+            onPress={() => navigateToProfile(item.uid)}
             outerStyle={{marginBottom: 10}}
             borderRadius={8}>
             <PeerProgress
-              nickname={item.name}
-              profile_picture={item.photo}
+              nickname={item.displayName}
+              profile_picture={item.photoURL}
               progressValue={item.percentage}
             />
           </RippleButton>

@@ -1,6 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {Appbar, useTheme} from 'react-native-paper';
 import {Header, IconButton} from '../components';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import RecieptScanner from '../fragments/RecieptScanner';
@@ -12,17 +11,21 @@ const Tab = createMaterialTopTabNavigator();
 
 const ScanQR: React.FC = () => {
   const {colors} = useTheme();
-  const styles = classes(colors);
   const navigation = useNavigation();
   const goBack = () => navigation.goBack();
   return (
     <>
       <Header
-        left={<IconButton icon="arrow-left" onPress={goBack} borderless />}
+        left={<Appbar.BackAction onPress={goBack} color={colors.text} />}
         title="Scan"
       />
       <Tab.Navigator
         initialRouteName="Reciepts"
+        tabBarOptions={{
+          activeTintColor: colors.primary,
+          inactiveTintColor: colors.disabled,
+          labelStyle: {fontWeight: 'bold'},
+        }}
         style={{backgroundColor: colors.surface}}>
         <Tab.Screen
           component={RecieptScanner}
@@ -46,13 +49,5 @@ const ScanQR: React.FC = () => {
     </>
   );
 };
-
-function classes(colors: ReactNativePaper.ThemeColors) {
-  return StyleSheet.create({
-    background: {
-      backgroundColor: colors.background,
-    },
-  });
-}
 
 export default ScanQR;

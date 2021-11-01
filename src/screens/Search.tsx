@@ -1,11 +1,9 @@
 import React from 'react';
 import {SafeAreaView, StyleSheet, TextInput, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import {useTheme} from 'react-native-paper';
-import {UserData} from '../utils/Types';
+import {Appbar, useTheme} from 'react-native-paper';
 import {Header, IconButton, User} from '../components';
 import {useNavigation} from '@react-navigation/native';
-import firebase from 'firebase/app';
 import {Snackbar} from 'react-native-paper';
 import {useAuth} from '../hooks/useAuth';
 import {useSearch} from '../hooks/useSearch';
@@ -60,7 +58,7 @@ const Search: React.FC = () => {
 
   const listHeaderComponent = () => (
     <Header
-      left={<IconButton icon="arrow-left" onPress={goBack} borderless />}
+      left={<Appbar.BackAction onPress={goBack} color={colors.text} />}
       center={
         <View style={styles.searchBar}>
           <TextInput

@@ -62,7 +62,9 @@ const SignIn: React.FC = () => {
               ? GoogleSigninButton.Color.Light
               : GoogleSigninButton.Color.Dark
           }
-          onPress={signIntoAccount}
+          onPress={() =>
+            signIntoAccount().then(() => navigation.navigate('StackNavigator'))
+          }
         />
       </View>
     </SafeAreaView>

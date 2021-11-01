@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {DarkAppTheme, LightAppTheme} from '../utils/Theme';
@@ -6,7 +6,13 @@ import {DarkAppTheme, LightAppTheme} from '../utils/Theme';
 function useCustomTheme() {
   const [isThemeDark, setIsThemeDark] = useState(false);
 
-  let theme = isThemeDark ? DarkAppTheme : LightAppTheme;
+  const theme = isThemeDark ? DarkAppTheme : LightAppTheme;
+
+  useEffect(() => {
+    AsyncStorage.getItem('theme-status').then(state => {
+      if (state === 'dark') setIsThemeDark(true);
+    });
+  }, []);
 
   const toggleTheme = async () => {
     try {
@@ -14,7 +20,16 @@ function useCustomTheme() {
         'theme-status',
         isThemeDark ? 'light' : 'dark',
       );
-      changeNavigationBarColor(theme.colors.background, !isThemeDark, true);
+      setIsThemeDark(isThemeDark => {
+        changeNavigationBarColor(
+          isThemeDark
+            ? LightAppTheme.colors.background
+            : DarkAppTheme.colors.background,
+          isThemeDark,
+          true,
+        );
+        return !isThemeDark;
+      });
     } catch (error) {
       console.error(error);
     }

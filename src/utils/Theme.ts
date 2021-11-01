@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { DefaultTheme, DarkTheme } from 'react-native-paper';
 
 // Light Theme - White
@@ -31,13 +30,7 @@ const DarkAppTheme = {
   }
 }
 
-const PreferencesContext = React.createContext<{ toggleTheme: () => void; isThemeDark: boolean; }>({
-  toggleTheme: () => {},
-  isThemeDark: false
-})
-
 export {
   LightAppTheme,
   DarkAppTheme,
-  PreferencesContext
 }

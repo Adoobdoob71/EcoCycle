@@ -6,12 +6,10 @@ import {Column, Row} from './';
 import IconButton from './IconButton';
 
 interface UserProps {
-  name?: string;
-  familyName?: string;
-  givenName?: string;
+  displayName?: string;
   email?: string;
-  photo?: string;
-  id?: string;
+  photoURL?: string;
+  uid?: string;
   onPress: () => void;
   outerStyle?: StyleProperty;
   disabled?: boolean;
@@ -23,10 +21,10 @@ const User: React.FC<UserProps> = props => {
 
   return (
     <View style={[styles.background, props.outerStyle]}>
-      <Image source={{uri: props.photo}} style={styles.profilePicture} />
+      <Image source={{uri: props.photoURL}} style={styles.profilePicture} />
       <Column style={{flex: 1}}>
         <Row style={{alignItems: 'center', marginBottom: 1}}>
-          <Text style={styles.givenName}>{props.givenName}</Text>
+          <Text style={styles.givenName}>{props.displayName}</Text>
         </Row>
         <Text style={styles.email}>{props.email}</Text>
       </Column>

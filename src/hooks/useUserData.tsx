@@ -6,7 +6,7 @@ interface Props {
   uid: string;
 }
 
-function useUserData({uid}: Props) {
+function useUserData(uid: string) {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);

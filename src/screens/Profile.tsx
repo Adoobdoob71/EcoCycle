@@ -9,28 +9,24 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {Appbar, useTheme} from 'react-native-paper';
 import {Header, IconButton, Surface, Row, Column, Top} from '../components';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
-import {BarChart} from 'react-native-chart-kit';
-import {convertOpacityToHex} from '../utils/usefulFunctions';
 import {ScrollView} from 'react-native-gesture-handler';
 import {StackScreenProps} from '@react-navigation/stack';
-import {AuthContext} from '../utils/Auth';
-import firebase from 'firebase/app';
-import {RecyclingDataType, UserData, UserRecyclingData} from '../utils/Types';
+import {UserData} from '../utils/Types';
+import {VictoryBar, VictoryChart, VictoryTheme} from 'victory-native';
+import {useUserData} from '../hooks/useUserData';
 
 const Profile: React.FC<
   StackScreenProps<{ProfileScreen: {id: string}}, 'ProfileScreen'>
-> = props => {
-  const [loading, setLoading] = React.useState(true);
+> = ({
+  route: {
+    params: {id},
+  },
+}) => {
+  const [loadingData, setLoadingData] = React.useState(true);
   const [userData, setUserData] = React.useState<UserData | null>(null);
-  const [itemsRecycledDataFromToday, setItemsRecycledDataFromToday] =
-    React.useState<RecyclingDataType[]>([]);
-  const [bottlesToRecycleAmount, setBottlesToRecycleAmount] = React.useState(0);
-  const [bottlesRecycledAmount, setBottlesRecycledAmount] = React.useState(0);
-  const [itemsRecycledPercentage, setItemsRecycledPercentage] =
-    React.useState(0);
 
   const {colors} = useTheme();
   const styles = classes(colors);
@@ -38,59 +34,14 @@ const Profile: React.FC<
   const navigation = useNavigation();
   const goBack = () => navigation.goBack();
 
-  const {userInfo} = React.useContext(AuthContext);
-
   const loadData = async () => {
     try {
-      let data = await firebase
-        .database()
-        .ref('users')
-        .child(props.route.params.id)
-        .child('recycling_brief')
-        .get();
-      let recyclingData = data.val() as UserRecyclingData;
-      setBottlesRecycledAmount(recyclingData.bottlesRecycledAmount);
-      if (
-        recyclingData.bottlesRecycledAmount >=
-        recyclingData.bottlesToRecycleAmount
-      ) {
-        setBottlesToRecycleAmount(recyclingData.bottlesRecycledAmount);
-      } else setBottlesToRecycleAmount(recyclingData.bottlesToRecycleAmount);
-
-      let percentage = Math.round(
-        (recyclingData.itemsRecycledAmount /
-          recyclingData.itemsToRecycleAmount) *
-          100,
-      );
-      if (isNaN(percentage)) setItemsRecycledPercentage(0);
-      if (percentage > 100) percentage = 100;
-      setItemsRecycledPercentage(percentage);
-      const date = new Date();
-      date.setDate(date.getDate() - 1);
-      let userProfile = await firebase
-        .database()
-        .ref('users')
-        .child(props.route.params.id)
-        .get();
-      let itemsRecycledDataToday = await firebase
-        .database()
-        .ref('users')
-        .child(props.route.params.id)
-        .child('recycling')
-        .child('already_recycled')
-        .orderByChild('created_at')
-        .startAt(date.getMilliseconds())
-        .get();
-      itemsRecycledDataToday.forEach(item => {
-        setItemsRecycledDataFromToday(currentData => [
-          ...currentData,
-          item.val(),
-        ]);
-      });
-      setUserData(userProfile.val());
-      setLoading(false);
+      const {userData, loadData, error, loading} = useUserData(id);
+      setLoadingData(loading);
+      await loadData();
+      setUserData(userData);
     } catch (error) {
-      console.error(error.message);
+      console.error(error);
     }
   };
 
@@ -98,10 +49,17 @@ const Profile: React.FC<
     loadData();
   }, []);
 
-  return loading ? (
+  const data = [
+    {quarter: 1, earnings: 13000},
+    {quarter: 2, earnings: 16500},
+    {quarter: 3, earnings: 14250},
+    {quarter: 4, earnings: 19000},
+  ];
+
+  return loadingData ? (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
       <Header
-        left={<IconButton icon="arrow-left" onPress={goBack} borderless />}
+        left={<Appbar.BackAction onPress={goBack} color={colors.text} />}
         title="Profile"
       />
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -122,12 +80,12 @@ const Profile: React.FC<
       <Surface direction="row" style={{alignItems: 'center', margin: 12}}>
         <Image
           source={{
-            uri: userData?.photo,
+            uri: userData?.photoURL,
           }}
           style={styles.profilePicture}
         />
         <Column style={{marginHorizontal: 12, flex: 1}}>
-          <Text style={styles.name}>{userData?.name}</Text>
+          <Text style={styles.name}>{userData?.displayName}</Text>
           <Text style={styles.email} numberOfLines={2} lineBreakMode="tail">
             {userData?.email}
           </Text>
@@ -135,7 +93,7 @@ const Profile: React.FC<
       </Surface>
       <Surface direction="column" style={{margin: 12}}>
         <Row style={{alignItems: 'center', justifyContent: 'space-around'}}>
-          <Column style={{alignItems: 'center'}}>
+          {/* <Column style={{alignItems: 'center'}}>
             <AnimatedCircularProgress
               rotation={0}
               size={100}
@@ -168,56 +126,16 @@ const Profile: React.FC<
               )}
             </AnimatedCircularProgress>
             <Text style={styles.recycledBottlesGreeting}>Items recycled</Text>
-          </Column>
+          </Column> */}
         </Row>
       </Surface>
       <Surface direction="column" style={{margin: 12}}>
         <Top textStyle={{margin: 4, marginVertical: 2, fontSize: 18}}>
           Recycling History
         </Top>
-        <BarChart
-          data={{
-            labels: itemsRecycledDataFromToday
-              .slice(
-                itemsRecycledDataFromToday.length - 4,
-                itemsRecycledDataFromToday.length,
-              )
-              .map(
-                item =>
-                  new Date(item.created_at).getDate() +
-                  '/' +
-                  (new Date(item.created_at).getMonth() + 1),
-              ),
-            datasets: [
-              {
-                data: itemsRecycledDataFromToday
-                  .slice(
-                    itemsRecycledDataFromToday.length - 4,
-                    itemsRecycledDataFromToday.length,
-                  )
-                  .map(item => item.bottles),
-              },
-            ],
-          }}
-          showValuesOnTopOfBars
-          yLabelsOffset={32}
-          yAxisLabel=""
-          yAxisSuffix=""
-          fromZero
-          width={Dimensions.get('window').width - 48}
-          height={200}
-          chartConfig={{
-            backgroundGradientFrom: colors.surface,
-            backgroundGradientFromOpacity: 0,
-            backgroundGradientTo: colors.primary,
-            backgroundGradientToOpacity: 0,
-            decimalPlaces: 0,
-            color: opacity => colors.primary + convertOpacityToHex(opacity),
-            barPercentage: 0.5,
-            useShadowColorFromDataset: false, // optional
-          }}
-          style={{marginVertical: 8, alignSelf: 'center', borderRadius: 8}}
-        />
+        <VictoryChart width={350} theme={VictoryTheme.material}>
+          <VictoryBar data={data} x="quarter" y="earnings" />
+        </VictoryChart>
       </Surface>
     </ScrollView>
   );

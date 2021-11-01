@@ -2,23 +2,22 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from '@react-navigation/drawer';
-import React from 'react';
-import {SafeAreaView, Image, StyleSheet, Text, Linking} from 'react-native';
-import {useTheme} from 'react-native-paper';
-import {Column, DrawerItem, IconButton, Row} from '../components';
-import {PreferencesContext} from '../utils/Theme';
+import React, {useContext} from 'react';
+import {SafeAreaView, Image, StyleSheet, Text} from 'react-native';
+import {IconButton} from 'react-native-paper';
+import {Column, DrawerItem, Row} from '../components';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
-import {AuthContext} from '../utils/Auth';
+import {useAuth} from '../hooks/useAuth';
+import {ThemeContext} from '../context/Theme';
 
 const DrawerFragment: React.FC<
   DrawerContentComponentProps<DrawerContentOptions>
 > = props => {
-  const {colors} = useTheme();
-  const styles = classes(colors);
-  const {toggleTheme, isThemeDark} = React.useContext(PreferencesContext);
+  const {theme, toggleTheme, isThemeDark} = useContext(ThemeContext);
+  const styles = classes(theme.colors);
 
-  const {userInfo} = React.useContext(AuthContext);
+  const {currentUser} = useAuth();
 
   const navigation = useNavigation();
   const navigateToSettings = () => navigation.navigate('Settings');
@@ -38,13 +37,13 @@ const DrawerFragment: React.FC<
           }}>
           <Image
             source={{
-              uri: userInfo?.user.photo,
+              uri: currentUser?.photoURL,
             }}
             style={styles.photo}
           />
           <Column style={{flex: 1, marginHorizontal: 10}}>
-            <Text style={styles.name}>{userInfo?.user.name}</Text>
-            <Text style={styles.email}>{userInfo?.user.email}</Text>
+            <Text style={styles.name}>{currentUser?.displayName}</Text>
+            <Text style={styles.email}>{currentUser?.email}</Text>
           </Column>
         </Row>
         <DrawerItem
@@ -65,7 +64,7 @@ const DrawerFragment: React.FC<
           text="My Profile"
           whereTo="ProfileScreen"
           outerStyle={{margin: 8}}
-          params={{id: userInfo?.user.id}}
+          params={{id: currentUser?.uid}}
           currentIndex={props.state.index}
           index={2}
         />
@@ -88,10 +87,10 @@ const DrawerFragment: React.FC<
         <IconButton
           icon={isThemeDark ? 'weather-night' : 'white-balance-sunny'}
           onPress={toggleTheme}
+          size={21}
           style={{marginHorizontal: 8}}
-          borderless
         />
-        <IconButton icon="cog" onPress={navigateToSettings} borderless />
+        <IconButton icon="cog" onPress={navigateToSettings} size={21} />
       </Row>
     </SafeAreaView>
   );

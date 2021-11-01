@@ -1,14 +1,14 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet} from 'react-native';
 import {Header, IconButton} from '../components';
 import {ScrollView, Switch} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/core';
-import {List} from 'react-native-paper';
+import {List, Appbar} from 'react-native-paper';
 import {useTheme} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNRestart from 'react-native-restart/src';
 import {useAuth} from '../hooks/useAuth';
-import {useCustomTheme} from '../hooks/useCustomTheme';
+import {ThemeContext} from '../context/Theme';
 
 const Settings: React.FC = () => {
   const navigation = useNavigation();
@@ -17,7 +17,7 @@ const Settings: React.FC = () => {
   const {colors} = useTheme();
 
   const {signOut} = useAuth();
-  const {toggleTheme, isThemeDark} = useCustomTheme();
+  const {toggleTheme, isThemeDark} = useContext(ThemeContext);
 
   const openGuide = async () => {
     await AsyncStorage.removeItem('already_launched');
@@ -32,7 +32,7 @@ const Settings: React.FC = () => {
       bounces={false}
       overScrollMode="never">
       <Header
-        left={<IconButton icon="arrow-left" onPress={goBack} borderless />}
+        left={<Appbar.BackAction onPress={goBack} color={colors.text} />}
         title="Settings"
       />
       <List.Section title="Appearance">

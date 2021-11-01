@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {Appbar, useTheme} from 'react-native-paper';
 import {Header, IconButton, RippleButton} from '../components';
 
 const About: React.FC = () => {
@@ -26,7 +26,9 @@ const About: React.FC = () => {
   return (
     <SafeAreaView style={styles.background}>
       <Header
-        left={<IconButton icon="menu" onPress={openDrawer} borderless />}
+        left={
+          <Appbar.Action icon="menu" onPress={openDrawer} color={colors.text} />
+        }
         title="About the developer"
       />
       <View style={styles.contentView}>

@@ -1,7 +1,8 @@
 import {useNavigation} from '@react-navigation/core';
-import React from 'react';
+import React, {useContext} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useTheme} from 'react-native-paper';
+import {ThemeContext} from '../context/Theme';
 import {StyleProperty} from '../utils/Types';
 import {RippleButton} from './';
 

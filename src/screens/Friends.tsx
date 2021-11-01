@@ -1,12 +1,13 @@
 import React from 'react';
 import {SafeAreaView, StyleSheet, RefreshControl} from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {Appbar, useTheme} from 'react-native-paper';
 import {FlatList} from 'react-native-gesture-handler';
 import {Header, IconButton, Friend} from '../components';
 import {useNavigation} from '@react-navigation/native';
 import {UserData} from '../utils/Types';
 import {useAuth} from '../hooks/useAuth';
-import firebase from 'firebase/app';
+import firestore from '@react-native-firebase/firestore';
+import {useUserData} from '../hooks/useUserData';
 
 const Friends: React.FC = () => {
   const [friends, setFriends] = React.useState<UserData[]>([]);
@@ -21,23 +22,24 @@ const Friends: React.FC = () => {
 
   const readData = async () => {
     setLoading(true);
-    setFriends([]);
-    if (currentUser) {
-      const data = await firebase
-        .database()
-        .ref('users')
-        .child(currentUser.uid)
-        .child('friends')
-        .get();
-      data.forEach(item => {
-        firebase
-          .database()
-          .ref('users')
-          .child(item.val().friend_id)
-          .once('value', snapshot => {
-            setFriends(friends => [...friends, snapshot.val()]);
+    try {
+      setFriends([]);
+      if (currentUser) {
+        const data = await firestore()
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('friends')
+          .get();
+        data.docs.forEach(item => {
+          const {loadData, userData, error} = useUserData(item.id);
+          if (error) throw error;
+          loadData().then(() => {
+            if (userData) setFriends(friends => [...friends, userData]);
           });
-      });
+        });
+      }
+    } catch (error) {
+      console.error(error);
     }
     setLoading(false);
   };
@@ -60,10 +62,20 @@ const Friends: React.FC = () => {
         )}
         ListHeaderComponent={() => (
           <Header
-            left={<IconButton icon="menu" onPress={openDrawer} borderless />}
+            left={
+              <Appbar.Action
+                icon="menu"
+                onPress={openDrawer}
+                color={colors.text}
+              />
+            }
             title="Friends"
             right={
-              <IconButton icon="magnify" onPress={goToSearch} borderless />
+              <Appbar.Action
+                icon="magnify"
+                onPress={goToSearch}
+                color={colors.text}
+              />
             }
             backgroundStyle={{marginBottom: 8}}
           />

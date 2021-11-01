@@ -4,9 +4,8 @@ import {useTheme} from 'react-native-paper';
 import {BarCodeReadEvent, RNCamera} from 'react-native-camera';
 import {Dimensions} from 'react-native';
 import {RecyclingDataType} from '../utils/Types';
-import {AuthContext} from '../utils/Auth';
 import {useNavigation} from '@react-navigation/native';
-import firebase from 'firebase/app';
+import {useAuth} from '../hooks/useAuth';
 
 const RecieptScanner: React.FC = () => {
   const [scanned, setScanned] = React.useState(false);
@@ -14,7 +13,7 @@ const RecieptScanner: React.FC = () => {
   const {colors} = useTheme();
   const styles = classes(colors);
 
-  const {userInfo} = React.useContext(AuthContext);
+  const {currentUser} = useAuth();
   const navigation = useNavigation();
 
   const readBarcode = async (event: BarCodeReadEvent) => {
@@ -27,27 +26,27 @@ const RecieptScanner: React.FC = () => {
 
   const recordData = async (barCodeData: RecyclingDataType) => {
     try {
-      if (userInfo?.user.id) {
-        let data: RecyclingDataType = {
-          ...barCodeData,
-          created_at: Date.now(),
-        };
-        await firebase
-          .database()
-          .ref(`users/${userInfo?.user.id}`)
-          .child('recycling')
-          .child('to_recycle')
-          .push()
-          .set(data);
-        const updates: any = {};
-        updates[
-          `users/${userInfo?.user.id}/recycling_brief/bottlesToRecycleAmount`
-        ] = firebase.database.ServerValue.increment(data.bottles);
-        updates[
-          `users/${userInfo?.user.id}/recycling_brief/itemsToRecycleAmount`
-        ] = firebase.database.ServerValue.increment(data.all_items);
-        await firebase.database().ref().update(updates);
-      }
+      // if (userInfo?.user.id) {
+      //   let data: RecyclingDataType = {
+      //     ...barCodeData,
+      //     created_at: Date.now(),
+      //   };
+      //   await firebase
+      //     .database()
+      //     .ref(`users/${userInfo?.user.id}`)
+      //     .child('recycling')
+      //     .child('to_recycle')
+      //     .push()
+      //     .set(data);
+      //   const updates: any = {};
+      //   updates[
+      //     `users/${userInfo?.user.id}/recycling_brief/bottlesToRecycleAmount`
+      //   ] = firebase.database.ServerValue.increment(data.bottles);
+      //   updates[
+      //     `users/${userInfo?.user.id}/recycling_brief/itemsToRecycleAmount`
+      //   ] = firebase.database.ServerValue.increment(data.all_items);
+      //   await firebase.database().ref().update(updates);
+      // }
     } catch (error) {
       console.error(error);
     }

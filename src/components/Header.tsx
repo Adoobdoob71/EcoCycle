@@ -49,8 +49,8 @@ function classes(colors: ReactNativePaper.ThemeColors) {
     headerBackground: {
       flexDirection: 'row',
       alignItems: 'center',
+      height: 56,
       paddingHorizontal: 10,
-      paddingVertical: 8,
       backgroundColor: colors.surface,
     },
     centerView: {

@@ -56,6 +56,7 @@ function useAuth() {
           email: newUser.email,
           photoURL: newUser.photoURL,
           uid: newUser.uid,
+          joinedOn: firestore.Timestamp.now(),
         });
     } catch (error) {
       console.error(error);

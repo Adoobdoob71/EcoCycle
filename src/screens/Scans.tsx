@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  RefreshControl,
-  SafeAreaView,
-  SectionList,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {Header, IconButton} from '../components';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';

@@ -1,14 +1,15 @@
 import { StyleProp, ViewStyle } from 'react-native';
+import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 
 export type StyleProperty = StyleProp<ViewStyle>; 
 
 export interface UserData {
 	id: string;
-	name: string | null;
+	displayName: string;
 	email: string;
-	photo: string | null;
-	familyName: string | null;
-	givenName: string | null;
+	photoURL: string;
+	joinedOn: FirebaseFirestoreTypes.Timestamp;
+	uid: string;
 }
 
 export interface RecyclingDataType {
